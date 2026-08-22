@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FörderFinder (PWA)
 
-## Getting Started
+Compliance-first AI-Beratungs-App für deutsche Förderprogramme.
+**Keine Rechts-, Steuer- oder Förderberatung. Explain-only AI.**
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js 16 (App Router, TypeScript, Tailwind 4)
+- Eigenes DSL-Regelwerk + deterministischer Engine (`lib/engine/`)
+- Intent Detection + Policy Gate + Response Filter (`lib/intent/`, `lib/ai/`)
+- Mistral API (Explain-only) — ohne Key: Demo-Modus mit Mock-Antworten
+- Supabase vorbereitet (`.env.example`), Persistenz in nächster Iteration
+
+## Entwicklung
+
+```sh
+pnpm install
+cp .env.example .env.local   # optional: MISTRAL_API_KEY setzen
+pnpm dev                     # http://127.0.0.1:3000
+pnpm test                    # 16 Tests (Engine + Intent)
+pnpm build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Flow
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. `/` — Landing mit Haftungsausschluss
+2. `/onboarding` — strukturierte Fragen (Facts)
+3. `/results` — Regel-Engine-Ergebnisse (immutable Snapshots)
+4. `/chat?decision_id=…` — Explain-only KI-Beratung
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Architektur
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Siehe `docs/ARCHITECTURE.md` (Repowurzel) — Leitprinzip: Die KI entscheidet nie.

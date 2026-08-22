@@ -1,0 +1,80 @@
+{
+  "id": "alg1",
+  "name": "Arbeitslosengeld I",
+  "category": "Arbeitslosigkeit",
+  "provider": "Bundesagentur für Arbeit",
+  "description": "Einkommensersatzleistung bei Arbeitslosigkeit nach vorheriger versicherungspflichtiger Beschäftigung.",
+  "target_group": ["Arbeitnehmer"],
+  "eligibility_rules": [
+    {
+      "if": { "insurance_months": { "gte": 12 } },
+      "then": { "eligible": true }
+    }
+  ],
+  "exclusion_rules": [
+    {
+      "if": { "insurance_months": { "lt": 12 } },
+      "then": {
+        "eligible": false,
+        "reason": "INSURANCE_PERIOD_TOO_SHORT",
+        "alternative": ["buergergeld"]
+      }
+    }
+  ],
+  "risk_rules": [
+    {
+      "if": { "employment_status": { "neq": "unemployed" } },
+      "then": { "risk": "NOT_OFFICIALLY_REGISTERED", "message_key": "MUST_REGISTER_AS_UNEMPLOYED" }
+    },
+    {
+      "if": { "resigned_voluntarily": true },
+      "then": { "risk": "SPERRZEIT_POSSIBLE", "message_key": "SPERRZEIT_12_WEEKS_MAX" }
+    }
+  ],
+  "benefits": { "type": "money", "description": "Einkommensersatzleistung bei Arbeitslosigkeit" },
+  "application": {
+    "authority": "Agentur für Arbeit",
+    "online": true,
+    "offline": true,
+    "links": ["https://www.arbeitsagentur.de/arbeitslosengeld"]
+  },
+  "documents_required": [
+    "Personalausweis oder Reisepass",
+    "Arbeitsbescheinigung (vom Arbeitgeber)",
+    "Kündigungsschreiben oder Arbeitsvertragsende",
+    "Sozialversicherungsausweis"
+  ],
+  "steps": [
+    {
+      "step_id": "ALG1_STEP_1",
+      "title": "Arbeitsuchend melden",
+      "when": "so früh wie möglich, in der Regel bis spätestens 3 Monate vor Ende des Arbeitsverhältnisses",
+      "explain": "Die Meldung erfolgt persönlich bei der Agentur für Arbeit.",
+      "risk_if_missed": "Mögliche Minderung des Anspruchs"
+    },
+    {
+      "step_id": "ALG1_STEP_2",
+      "title": "Arbeitslos melden",
+      "when": "spätestens am ersten Tag der Arbeitslosigkeit",
+      "explain": "Arbeitslosmeldung muss persönlich erfolgen.",
+      "risk_if_missed": "Sperrzeit oder Anspruchsverlust möglich"
+    },
+    {
+      "step_id": "ALG1_STEP_3",
+      "title": "Antrag auf Arbeitslosengeld stellen",
+      "when": "gleichzeitig mit der Arbeitslosmeldung",
+      "explain": "Antrag online oder vor Ort bei der Agentur für Arbeit.",
+      "risk_if_missed": "Keine rückwirkende Leistung über den Antragsmonat hinaus"
+    }
+  ],
+  "notes": [
+    "In der Regel 12 Monate Pflichtversicherung innerhalb der letzten 30 Monate erforderlich (Rahmenfrist).",
+    "Die genaue Anspruchsdauer hängt von Alter und Versicherungsdauer ab.",
+    "Die Regeln sind vereinfacht; bitte im Einzelfall bei der Agentur für Arbeit prüfen."
+  ],
+  "valid_until": "2026-12-31",
+  "sources": [
+    "Bundesagentur für Arbeit – Arbeitslosengeld",
+    "SGB III (§§ 136 ff.)"
+  ]
+}
