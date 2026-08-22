@@ -12,12 +12,14 @@ import { applyPolicy } from '../../../lib/intent/policy';
 import { explainDecision } from '../../../lib/ai/explain';
 import { getFunding } from '../../../lib/engine/registry';
 import { getDecision } from '../decisions/route';
+import { getRepository } from '../../../lib/db/repository';
 
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as {
       decision_id?: string;
       question?: string;
+      user_id?: string;
     };
 
     const question = (body.question ?? '').trim();
@@ -31,14 +33,23 @@ export async function POST(request: Request) {
     // 2) Policy gate
     const policy = applyPolicy(intent.type);
 
-    // audit log (MVP: console; Supabase audit_logs table in next iteration)
-    console.log('[audit]', JSON.stringify({
+    // 3) audit log (Supabase when configured, console fallback)
+    const auditEntry = {
       event_type: policy.allowLLM ? 'LLM_CALL' : 'INTENT_BLOCKED',
-      intent: intent.type,
-      matched_keyword: intent.matchedKeyword ?? undefined,
-      decision_id: body.decision_id ?? undefined,
-      ts: new Date().toISOString(),
-    }));
+      user_id: body.user_id,
+      payload: {
+        intent: intent.type,
+        matched_keyword: intent.matchedKeyword ?? undefined,
+        decision_id: body.decision_id ?? undefined,
+        question_excerpt: question.slice(0, 200),
+      },
+      created_at: new Date().toISOString(),
+    };
+    try {
+      await getRepository().saveAudit(auditEntry);
+    } catch (err) {
+      console.error('[api/explain] audit log failed:', err);
+    }
 
     if (!policy.allowLLM) {
       return NextResponse.json({
@@ -48,10 +59,10 @@ export async function POST(request: Request) {
       });
     }
 
-    // 3) Resolve decision (only existing snapshots — AI cannot create decisions)
+    // 4) Resolve decision (only existing snapshots — AI cannot create decisions)
     let decision = null;
     if (body.decision_id) {
-      decision = getDecision(body.decision_id);
+      decision = await getDecision(body.decision_id);
       if (!decision) {
         return NextResponse.json(
           { error: 'Entscheidung nicht gefunden. Bitte führen Sie zuerst eine Prüfung durch.' },
@@ -66,7 +77,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 4) Explain-only LLM call
+    // 5) Explain-only LLM call
     const result = await explainDecision({
       decision,
       funding: getFunding(decision.funding_id),

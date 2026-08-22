@@ -2,26 +2,34 @@
 // POST /api/decisions
 // Creates eligibility decisions for ALL fundings for a given user profile.
 // This is the ONLY endpoint that produces DecisionSnapshots — via the
-// deterministic engine, never via AI. For MVP the store is in-memory
-// (per-process); Supabase persistence is the next iteration.
+// deterministic engine, never via AI. Snapshots are persisted through the
+// repository (Supabase when configured, in-memory fallback otherwise).
 // ============================================================================
 
 import { NextResponse } from 'next/server';
 import type { UserProfile } from '../../../lib/types';
 import { evaluateAll } from '../../../lib/engine/evaluator';
 import { loadFundings } from '../../../lib/engine/registry';
+import { getRepository } from '../../../lib/db/repository';
 
-// In-memory decision store (MVP). Supabase replaces this in the next iteration.
-const decisions = new Map<string, ReturnType<typeof evaluateAll>[number]>();
-
-export function getDecision(decisionId: string) {
-  return decisions.get(decisionId);
+// Convenience accessor for the explain route (shares the same repository).
+export async function getDecision(decisionId: string) {
+  try {
+    return await getRepository().getDecision(decisionId);
+  } catch (err) {
+    console.error('[api/decisions] read failed:', err);
+    return null;
+  }
 }
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as { profile?: Partial<UserProfile> };
+    const body = (await request.json()) as {
+      profile?: Partial<UserProfile>;
+      user_id?: string;
+    };
     const profile = (body.profile ?? {}) as UserProfile;
+    if (body.user_id) profile.user_id = body.user_id;
 
     const fundings = loadFundings();
     if (fundings.length === 0) {
@@ -32,11 +40,18 @@ export async function POST(request: Request) {
     }
 
     const results = evaluateAll(profile, fundings);
-    for (const r of results) {
-      decisions.set(r.decision_id, r);
+
+    const repo = getRepository();
+    let persisted = true;
+    try {
+      await repo.saveDecisions(results);
+    } catch (err) {
+      // e.g. tables not migrated yet -> keep the response usable, log loudly.
+      persisted = false;
+      console.error('[api/decisions] persist failed (running memory-only):', err);
     }
 
-    return NextResponse.json({ decisions: results });
+    return NextResponse.json({ decisions: results, persisted });
   } catch (err) {
     console.error('[api/decisions]', err);
     return NextResponse.json({ error: 'Ungültige Anfrage' }, { status: 400 });

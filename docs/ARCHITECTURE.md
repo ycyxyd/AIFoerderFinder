@@ -45,9 +45,15 @@ User Input → Intent Detection → Policy Gate → Decision Store (read-only)
 6. **Demo-Modus**: Ohne `MISTRAL_API_KEY` liefert der Explain-Service eine
    deterministische deutsche Mock-Antwort (`usedMock: true`), damit die App
    sofort lauffähig und testbar ist.
-7. **In-Memory-Store (MVP)**: `/api/decisions` hält Snapshots im Prozess.
-   Supabase-Persistenz (mit RLS) ist der nächste Iterationsschritt
-   (`lib/db.ts` vorbereitet, `.env.example` vorhanden).
+7. **In-Memory-Store (Fallback)**: Ohne `SUPABASE_SERVICE_ROLE_KEY` hält die
+   App Entscheidungen im Prozess (`lib/db/repository.ts` → MemoryRepository).
+   Mit konfiguriertem Supabase (URL + Service-Role-Key) speichert sie in
+   `eligibility_decisions` + `audit_logs` (SupabaseRepository). Die
+   Datenbank-Migration liegt in `supabase/migrations/0001_init.sql`
+   (siehe `docs/SUPABASE_SETUP.md`).
+8. **Auth (MVP)**: `/api/auth/signup` (Pflicht: `accepted_terms: true` →
+   `accepted_terms_at` in `users`), `/api/auth/login`, `/api/auth/me`.
+   Token-basiert, Client hält Session. Noch kein Cookie-/SSR-Session-Flow.
 
 ## Bekannte offene Punkte (Review-Ergebnis, 2026-08-22)
 

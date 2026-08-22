@@ -16,7 +16,7 @@ const FORBIDDEN_PATTERNS: FilterPattern[] = [
   { pattern: /das\s+steht\s+ihnen\s+zu|das\s+steht\s+dir\s+zu/gi, replacement: 'Ob ein Anspruch besteht, entscheidet ausschließlich die zuständige Stelle.' },
   { pattern: /die\s+behörde\s+muss/gi, replacement: 'Die zuständige Behörde prüft den Einzelfall.' },
   { pattern: /ich\s+empfehle\s+ihnen,?[^.]*zu\s+machen/gi, replacement: 'Bitte klären Sie Einzelheiten direkt mit der zuständigen Stelle.' },
-  { pattern: /\b100\s?%\b/gi, replacement: 'mit hoher Wahrscheinlichkeit' },
+  { pattern: /\b100\s?%/gi, replacement: 'mit hoher Wahrscheinlichkeit' },
   { pattern: /ich\s+garantiere/gi, replacement: 'Ich kann keine Garantie geben.' },
   { pattern: /ich\s+verspreche/gi, replacement: 'Ich kann nichts verbindlich zusagen.' },
 ];
