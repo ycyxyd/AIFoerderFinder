@@ -1,0 +1,77 @@
+{
+  "id": "kfw_gruenderkredit",
+  "name": "KfW-Gründerkredit",
+  "category": "Existenzgründung",
+  "provider": "KfW (über Hausbank / Finanzierungspartner)",
+  "description": "Förderkredit der KfW für Existenzgründungen und junge Unternehmen. Das frühere Produkt KfW-Gründerkredit wird heute als ERP-Gründerkredit – StartGeld (Nr. 067) angeboten; der Antrag läuft ausschließlich über einen Finanzierungspartner (z. B. Hausbank).",
+  "target_group": [
+    "Existenzgründer",
+    "Junge Unternehmen",
+    "Unternehmensnachfolger",
+    "Selbstständige im Haupt- oder Nebenerwerb"
+  ],
+  "eligibility_rules": [
+    {
+      "if": { "starting_self_employment": { "eq": true } },
+      "then": { "eligible": true }
+    }
+  ],
+  "exclusion_rules": [],
+  "risk_rules": [
+    {
+      "if": { "business_plan": { "neq": true } },
+      "then": {
+        "risk": "NO_BUSINESS_PLAN",
+        "message_key": "BUSINESS_PLAN_REQUIRED_FOR_KREDITGESPRAECH"
+      }
+    }
+  ],
+  "benefits": {
+    "type": "money",
+    "description": "Förderkredit bis zu 200.000 Euro (kein Mindestbetrag), davon bis zu 80.000 Euro für Betriebsmittel. Kein Eigenkapital erforderlich, 100 % Auszahlung, bis zu zwei tilgungsfreie Anlaufjahre, Laufzeit bis zu 10 Jahre. Die KfW übernimmt 80 % des Kreditrisikos, was den Kreditzugang erleichtert. Konkrete Zinssätze werden nicht pauschal veröffentlicht."
+  },
+  "application": {
+    "authority": "Hausbank bzw. Finanzierungspartner (Antrag nicht direkt bei der KfW)",
+    "online": false,
+    "offline": true,
+    "links": [
+      "https://www.kfw.de/inlandsfoerderung/Unternehmen/Gründen-Nachfolgen/Förderprodukte/ERP-Gründerkredit-Startgeld-(067)/"
+    ]
+  },
+  "documents_required": [
+    "Businessplan / Geschäftskonzept",
+    "Vereinfachte Selbsterklärung KMU oder Selbsterklärung KMU (Anlagen 3–5)",
+    "De-minimis-Erklärung",
+    "Einwilligungserklärung (z. B. für SCHUFA-Auskunft)",
+    "Optional: Investitionsplan, Liquiditätsplan, Rentabilitätsplan"
+  ],
+  "steps": [
+    {
+      "step_id": "KFW_STEP_1",
+      "title": "Antrag beim Finanzierungspartner stellen",
+      "when": "vor Beginn des Vorhabens",
+      "explain": "Den Förderkredit bei der Hausbank oder einem anderen Finanzierungspartner beantragen – nicht direkt bei der KfW. Den Businessplan zum Gespräch mitbringen.",
+      "risk_if_missed": "Keine Förderung, wenn der Antrag erst nach Beginn des Vorhabens gestellt wird"
+    },
+    {
+      "step_id": "KFW_STEP_2",
+      "title": "Zusage erhalten und Vorhaben starten",
+      "when": "nach Zusage der KfW",
+      "explain": "Nach Zusage der KfW kann der Kreditvertrag beim Finanzierungspartner abgeschlossen und die Kreditsumme abgerufen werden.",
+      "risk_if_missed": "Vorhaben kann nicht wie geplant finanziert werden"
+    }
+  ],
+  "notes": [
+    "Der frühere KfW-Gründerkredit wird von der KfW heute als ERP-Gründerkredit – StartGeld (Kredit Nr. 067) angeboten.",
+    "Gefördert werden: Investitionen (z. B. Anlagen, Maschinen, Grundstücke, Gebäude, Ausstattung, Firmenfahrzeuge), Betriebsmittel (z. B. Personalkosten, Mieten, Marketing, Beratungskosten, Material- und Warenlager) sowie der Kauf eines Unternehmens oder Unternehmensanteils.",
+    "Nicht gefördert werden: mittlere und große Unternehmen sowie Unternehmen, die ihre Geschäftstätigkeit vor mehr als fünf Jahren aufgenommen haben.",
+    "Sowohl der Sitz des Unternehmens als auch der Ort der Investition müssen in Deutschland liegen.",
+    "Antragstellung ausschließlich über den Finanzierungspartner; die KfW veröffentlicht keine pauschalen Zinskonditionen – diese werden individuell vereinbart.",
+    "Bedingungen im Einzelfall bei der zuständigen Stelle prüfen."
+  ],
+  "valid_until": "2026-12-31",
+  "last_verified": "2026-08-22",
+  "sources": [
+    "KfW – ERP-Gründerkredit – StartGeld (067) (kfw.de)"
+  ]
+}

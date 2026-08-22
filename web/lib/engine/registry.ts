@@ -11,7 +11,11 @@ import type { FundingSchema } from '../types';
 
 const DATA_DIR = path.join(process.cwd(), 'data', 'foerderungen');
 
+// Short TTL so data-file updates are picked up without a server restart,
+// while still avoiding a readdir+parse on every single request.
+const CACHE_TTL_MS = 30_000;
 let cache: FundingSchema[] | null = null;
+let cacheTime = 0;
 
 /** Validate minimal invariants of a funding definition. */
 export function isValidFunding(f: unknown): f is FundingSchema {
@@ -28,7 +32,8 @@ export function isValidFunding(f: unknown): f is FundingSchema {
 }
 
 export function loadFundings(): FundingSchema[] {
-  if (cache) return cache;
+  const now = Date.now();
+  if (cache && now - cacheTime < CACHE_TTL_MS) return cache;
 
   const result: FundingSchema[] = [];
   if (!fs.existsSync(DATA_DIR)) {
@@ -57,6 +62,7 @@ export function loadFundings(): FundingSchema[] {
   // Deterministic order for stable results pages.
   result.sort((a, b) => a.id.localeCompare(b.id));
   cache = result;
+  cacheTime = now;
   return result;
 }
 
@@ -67,4 +73,5 @@ export function getFunding(id: string): FundingSchema | undefined {
 /** Clear the module cache (tests). */
 export function _resetRegistryForTests(): void {
   cache = null;
+  cacheTime = 0;
 }

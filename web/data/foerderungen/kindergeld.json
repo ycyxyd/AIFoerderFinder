@@ -1,0 +1,97 @@
+{
+  "id": "kindergeld",
+  "name": "Kindergeld",
+  "category": "Familie und Kinder",
+  "provider": "Familienkasse der Bundesagentur für Arbeit",
+  "description": "Monatliche staatliche Leistung für Eltern beziehungsweise Erziehungsberechtigte zur Unterstützung bei den Kosten der Kindererziehung. Gezahlt wird Kindergeld in der Regel für Kinder unter 18 Jahren; unter bestimmten Voraussetzungen auch für volljährige Kinder.",
+  "target_group": [
+    "Eltern",
+    "Erziehungsberechtigte",
+    "Pflegeeltern"
+  ],
+  "eligibility_rules": [
+    {
+      "if": { "children": { "gte": 1 } },
+      "then": { "eligible": true }
+    }
+  ],
+  "exclusion_rules": [
+    {
+      "if": { "children": { "lt": 1 } },
+      "then": {
+        "eligible": false,
+        "reason": "NO_CHILDREN",
+        "alternative": []
+      }
+    }
+  ],
+  "risk_rules": [],
+  "benefits": {
+    "type": "money",
+    "description": "Kindergeld 2026: 259 Euro pro Monat und Kind (EStG § 66 Abs. 1). Die Auszahlung erfolgt monatlich ab dem Monat, in dem die Anspruchsvoraussetzungen erfüllt sind, bis zum Ende des Monats, in dem sie wegfallen (EStG § 66 Abs. 2)."
+  },
+  "application": {
+    "authority": "Familienkasse der Bundesagentur für Arbeit",
+    "online": true,
+    "offline": true,
+    "links": [
+      "https://www.familienkasse.de/",
+      "https://www.arbeitsagentur.de/familie-und-kinder/kindergeld",
+      "https://www.arbeitsagentur.de/familie-und-kinder/infos-rund-um-kindergeld/kindergeld-anspruch-hoehe-dauer"
+    ]
+  },
+  "documents_required": [
+    "Steueridentifikationsnummer des Kindes (wird der Familienkasse nach der Geburt automatisch übermittelt)",
+    "Geburtsurkunde des Kindes",
+    "Bei volljährigen Kindern: Nachweise über Schul- oder Berufsausbildung bzw. Studium (z. B. Schul- oder Studienbescheinigung)",
+    "Bei arbeitslos gemeldeten Kindern: Bescheinigung über die Arbeitsuchendmeldung",
+    "IBAN für die Auszahlung"
+  ],
+  "steps": [
+    {
+      "step_id": "KG_STEP_1",
+      "title": "Kindergeld beantragen",
+      "when": "möglichst direkt nach der Geburt bzw. sobald der Anspruch entsteht",
+      "explain": "Antrag online über familienkasse.de bzw. das Benutzerkonto der Bundesagentur für Arbeit oder per Formular (KG 1) bei der Familienkasse.",
+      "risk_if_missed": "Kindergeld wird nur 6 Monate rückwirkend gezahlt - bei späterem Antrag drohen finanzielle Nachteile"
+    },
+    {
+      "step_id": "KG_STEP_2",
+      "title": "Nachweise einreichen",
+      "when": "mit dem Antrag oder auf Anforderung der Familienkasse",
+      "explain": "Erforderliche Nachweise (z. B. Geburtsurkunde, bei volljährigen Kindern Ausbildungs- oder Studienbescheinigungen) einreichen.",
+      "risk_if_missed": "Der Antrag kann erst nach Eingang der Nachweise bearbeitet werden"
+    },
+    {
+      "step_id": "KG_STEP_3",
+      "title": "Bescheid abwarten",
+      "when": "nach Prüfung durch die Familienkasse",
+      "explain": "Die Familienkasse prüft den Anspruch und zahlt Kindergeld monatlich ab dem Monat, in dem die Voraussetzungen erfüllt sind.",
+      "risk_if_missed": "Gegen den Bescheid kann nur innerhalb eines Monats nach Bekanntgabe Einspruch eingelegt werden"
+    },
+    {
+      "step_id": "KG_STEP_4",
+      "title": "Veränderungen mitteilen",
+      "when": "z. B. bei Ausbildungsende, Studienabbruch, Umzug oder Auslandsaufenthalt des Kindes",
+      "explain": "Änderungen bei den Anspruchsvoraussetzungen müssen der Familienkasse gemeldet werden.",
+      "risk_if_missed": "Nicht gemeldete Änderungen können zu Rückforderungen von Kindergeld führen"
+    }
+  ],
+  "notes": [
+    "Kindergeld 2026: 259 Euro pro Monat und Kind (EStG § 66 Abs. 1; Bundesagentur für Arbeit).",
+    "Grundsätzlich wird Kindergeld bis zur Vollendung des 18. Lebensjahres des Kindes gezahlt (EStG § 32 Abs. 3).",
+    "Für volljährige Kinder wird Kindergeld u. a. gezahlt: bis 21 Jahre bei Arbeitsuchendmeldung und keiner Beschäftigung; bis 25 Jahre bei erstmaliger Schul- oder Berufsausbildung bzw. Studium, in einer Übergangszeit von höchstens 4 Monaten zwischen zwei Ausbildungsabschnitten oder bei fehlendem Ausbildungsplatz (EStG § 32 Abs. 4; Bundesagentur für Arbeit).",
+    "Nach Abschluss einer erstmaligen Berufsausbildung oder eines Erststudiums wird das Kind nur berücksichtigt, wenn es keiner Erwerbstätigkeit nachgeht; unschädlich sind eine Erwerbstätigkeit mit bis zu 20 Wochenstunden, ein Ausbildungsdienstverhältnis oder eine geringfügige Beschäftigung (EStG § 32 Abs. 4).",
+    "Für Kinder mit Behinderung, die vor Vollendung des 25. Lebensjahres eingetreten ist, kann Kindergeld über das 25. Lebensjahr hinaus gezahlt werden (EStG § 32 Abs. 4).",
+    "Kindergeld wird 6 Monate rückwirkend gezahlt; der Antrag sollte daher rechtzeitig gestellt werden.",
+    "Die Regeln sind vereinfacht; Bedingungen im Einzelfall bei der Familienkasse prüfen."
+  ],
+  "valid_until": "2026-12-31",
+  "last_verified": "2026-08-22",
+  "sources": [
+    "Einkommensteuergesetz (EStG) §§ 32, 66 (gesetze-im-internet.de)",
+    "Bundesagentur für Arbeit – Kindergeld: Anspruch, Höhe, Dauer (arbeitsagentur.de)",
+    "Bundesagentur für Arbeit – Kindergeld ab 18 Jahren (arbeitsagentur.de)",
+    "Familienkasse (familienkasse.de)"
+  ]
+}

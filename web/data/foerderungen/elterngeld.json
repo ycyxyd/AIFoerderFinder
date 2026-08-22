@@ -1,0 +1,78 @@
+{
+  "id": "elterngeld",
+  "name": "Elterngeld / ElterngeldPlus",
+  "category": "Familie & Kinder",
+  "provider": "Elterngeldstelle (zuständig für den Wohnort des Kindes)",
+  "description": "Einkommensersatzleistung für Eltern nach der Geburt eines Kindes, die das Kind selbst betreuen und erziehen und während des Bezugs nicht mehr als 32 Wochenstunden arbeiten.",
+  "target_group": [
+    "Eltern (Mütter und Väter)",
+    "Alleinerziehende",
+    "Getrennt Erziehende",
+    "Adoptiveltern"
+  ],
+  "eligibility_rules": [
+    {
+      "if": { "newborn_child": { "eq": true } },
+      "then": { "eligible": true }
+    }
+  ],
+  "exclusion_rules": [],
+  "risk_rules": [],
+  "benefits": {
+    "type": "money",
+    "description": "Basiselterngeld: mindestens 300 Euro und höchstens 1.800 Euro monatlich; in der Regel 65 Prozent des durchschnittlichen Nettoeinkommens vor der Geburt (berücksichtigt werden maximal 2.770 Euro Nettoeinkommen). ElterngeldPlus: in der Regel halb so hoch wie das Basiselterngeld, dafür doppelt so lange beziehbar. Der Mindestbetrag (300 Euro Basiselterngeld bzw. 150 Euro ElterngeldPlus) wird auch ohne vorheriges Einkommen gezahlt."
+  },
+  "application": {
+    "authority": "Elterngeldstelle (zuständig für den Wohnort des Kindes)",
+    "online": true,
+    "offline": true,
+    "links": [
+      "https://familienportal.de/familienportal/familienleistungen/elterngeld",
+      "https://familienportal.de/familienportal/rechner-antraege/elterngeld-digital"
+    ]
+  },
+  "documents_required": [
+    "Geburtsurkunde des Kindes",
+    "Nachweise über das bisherige Einkommen (bei Nicht-Selbstständigen Lohn- oder Gehaltsabrechnungen der letzten 12 Monate, bei Selbstständigen in der Regel der letzte Steuerbescheid)",
+    "Ggf. Steuerbescheid für das Kalenderjahr vor der Geburt",
+    "Ggf. Bescheinigungen der Krankenkasse über Mutterschaftsgeld und des Arbeitgebers über Zuschüsse zum Mutterschaftsgeld"
+  ],
+  "steps": [
+    {
+      "step_id": "ELTERN_STEP_1",
+      "title": "Unterlagen vorbereiten",
+      "when": "nach der Geburt des Kindes",
+      "explain": "Geburtsurkunde und Einkommensnachweise (z. B. Lohn- und Gehaltsabrechnungen der letzten 12 Monate bzw. Steuerbescheid) bereithalten.",
+      "risk_if_missed": "Antrag kann nicht vollständig eingereicht werden"
+    },
+    {
+      "step_id": "ELTERN_STEP_2",
+      "title": "Elterngeld beantragen",
+      "when": "gleich nach der Geburt, innerhalb der ersten 3 Lebensmonate des Kindes",
+      "explain": "Antrag mit dem Formular des Bundeslandes bei der zuständigen Elterngeldstelle oder digital über ElterngeldDigital stellen.",
+      "risk_if_missed": "Elterngeld wird maximal für 3 Lebensmonate rückwirkend gezahlt – bei späterer Antragstellung geht Geld verloren"
+    },
+    {
+      "step_id": "ELTERN_STEP_3",
+      "title": "Änderungen während des Bezugs melden",
+      "when": "während des Elterngeld-Bezugs",
+      "explain": "Änderungen, z. B. Beginn oder Änderung einer Teilzeitarbeit, der Elterngeldstelle mitteilen.",
+      "risk_if_missed": "Elterngeld wird neu berechnet; zu viel gezahltes Elterngeld muss zurückgezahlt werden"
+    }
+  ],
+  "notes": [
+    "Einkommensgrenze: Elterngeld ist ausgeschlossen ab einem zu versteuernden Jahreseinkommen von mehr als 175.000 Euro (für Geburten ab 1. April 2025; für Geburten ab 1. April 2024 galt noch 200.000 Euro). Bei Paaren und getrennt Erziehenden wird das Einkommen beider Elternteile zusammengerechnet, bei Alleinerziehenden zählt das alleinige Einkommen. Maßgeblich ist das zu versteuernde Einkommen im Kalenderjahr vor der Geburt. Diese Grenze ist im Regelwerk nicht als Bedingung abbildbar, da das Profil kein Feld für das zu versteuernde Jahreseinkommen enthält.",
+    "Während des Elterngeld-Bezugs darf höchstens 32 Stunden pro Woche gearbeitet werden – auch bei selbstständiger Tätigkeit.",
+    "Weitere Voraussetzungen laut Familienportal des Bundes: Sie betreuen und erziehen Ihr Kind selbst und leben mit ihm in einem gemeinsamen Haushalt in Deutschland.",
+    "Basiselterngeld wird für 12 Lebensmonate gezahlt (bis zu 14 Monate mit Partnerschaftsmonaten); ElterngeldPlus kann doppelt so lange bezogen werden. Für Geburten ab 01.04.2024 können beide Eltern Basiselterngeld nur für maximal einen Monat gleichzeitig beziehen.",
+    "Der Antrag kann erst nach der Geburt des Kindes gestellt werden; jeder Elternteil kann Elterngeld nur einmal pro Kind beantragen.",
+    "Bedingungen im Einzelfall bei der zuständigen Stelle prüfen."
+  ],
+  "valid_until": "2026-12-31",
+  "last_verified": "2026-08-22",
+  "sources": [
+    "Familienportal des Bundes – Elterngeld (familienportal.de)",
+    "Familienportal des Bundes – Fragen und Antworten zum Elterngeld (familienportal.de)",
+    "BMFSFJ – Elterngeld und Elternzeit (Broschüre)"
+  ]
+}

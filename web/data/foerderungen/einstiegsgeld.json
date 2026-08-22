@@ -1,0 +1,121 @@
+{
+  "id": "einstiegsgeld",
+  "name": "Einstiegsgeld",
+  "category": "Existenzgründung",
+  "provider": "Jobcenter",
+  "description": "Zuschuss des Jobcenters zur Überbrückung der Gründungsphase, wenn Empfänger von Grundsicherungsgeld (ehemals Bürgergeld) eine hauptberufliche selbstständige Tätigkeit aufnehmen.",
+  "target_group": [
+    "Empfänger von Grundsicherungsgeld (ehemals Bürgergeld)",
+    "Existenzgründer"
+  ],
+  "eligibility_rules": [
+    {
+      "if": {
+        "receives_buergergeld": { "eq": true },
+        "starting_self_employment": { "eq": true }
+      },
+      "then": { "eligible": true }
+    }
+  ],
+  "exclusion_rules": [
+    {
+      "if": { "receives_buergergeld": { "neq": true } },
+      "then": {
+        "eligible": false,
+        "reason": "NO_BASIC_INCOME_BENEFIT",
+        "alternative": ["gruendungszuschuss"]
+      }
+    },
+    {
+      "if": { "employment_status": { "eq": "self_employed" } },
+      "then": {
+        "eligible": false,
+        "reason": "ALREADY_SELF_EMPLOYED",
+        "alternative": []
+      }
+    }
+  ],
+  "risk_rules": [
+    {
+      "if": { "business_plan": { "neq": true } },
+      "then": {
+        "risk": "NO_BUSINESS_PLAN",
+        "message_key": "BUSINESS_PLAN_REQUIRED_FOR_ASSESSMENT"
+      }
+    }
+  ],
+  "benefits": {
+    "type": "money",
+    "description": "Monatlicher Zuschuss, der individuell vom Jobcenter festgelegt wird. Auszahlung höchstens 24 Monate, monatlich und ohne Abzüge. Das Einstiegsgeld wird nicht auf das Grundsicherungsgeld angerechnet."
+  },
+  "application": {
+    "authority": "Jobcenter",
+    "online": true,
+    "offline": false,
+    "links": [
+      "https://www.arbeitsagentur.de/grundsicherung/arbeit-finden/einstiegsgeld-selbststaendigkeit",
+      "https://www.jobcenter.digital"
+    ]
+  },
+  "documents_required": [
+    "Lebenslauf",
+    "Geschäftsplan (Businessplan)",
+    "Kapitalbedarfs- und Finanzierungsplan",
+    "Umsatz- und Rentabilitätsvorschau für die nächsten 3 Jahre",
+    "Gegebenenfalls Nachweise über Kenntnisse und Fähigkeiten für die Selbstständigkeit",
+    "Gegebenenfalls Stellungnahme Dritter zur Tragfähigkeit des Unternehmens (z. B. Bank oder fachkundige Stelle)"
+  ],
+  "steps": [
+    {
+      "step_id": "EG_STEP_1",
+      "title": "Beratungsgespräch vereinbaren",
+      "when": "vor Beginn der Selbstständigkeit",
+      "explain": "Termin mit der Integrationsfachkraft des zuständigen Jobcenters vereinbaren.",
+      "risk_if_missed": "Förderung nicht möglich, da keine Prüfung der Voraussetzungen stattfindet"
+    },
+    {
+      "step_id": "EG_STEP_2",
+      "title": "Unterlagen zusammenstellen",
+      "when": "vor oder zum Beratungstermin",
+      "explain": "Geschäftsplan, Kapitalbedarfs- und Finanzierungsplan, Umsatz- und Rentabilitätsvorschau sowie Lebenslauf vorbereiten und mitbringen oder nachreichen.",
+      "risk_if_missed": "Verzögerung oder Ablehnung, wenn die Tragfähigkeit der Gründung nicht belegt werden kann"
+    },
+    {
+      "step_id": "EG_STEP_3",
+      "title": "Beraten lassen",
+      "when": "im Beratungstermin",
+      "explain": "Die Integrationsfachkraft berät zum Einstiegsgeld und erläutert, welche Unterlagen noch benötigt werden.",
+      "risk_if_missed": "Unvollständige Antragsgrundlage"
+    },
+    {
+      "step_id": "EG_STEP_4",
+      "title": "Antrag stellen",
+      "when": "vor Beginn der Selbstständigkeit",
+      "explain": "Online-Antrag auf Einstiegsgeld im Benutzerkonto stellen; Nachweise können direkt mitgesendet oder später nachgereicht werden.",
+      "risk_if_missed": "Keine Förderung, wenn der Antrag erst nach der Selbstständigkeit gestellt wird"
+    },
+    {
+      "step_id": "EG_STEP_5",
+      "title": "Bescheid erhalten",
+      "when": "nach Prüfung durch das Jobcenter",
+      "explain": "Das Jobcenter prüft Antrag und Unterlagen und erteilt einen Bescheid über Höhe und Dauer des Einstiegsgeldes.",
+      "risk_if_missed": "Keine Auszahlung ohne Bewilligungsbescheid"
+    }
+  ],
+  "notes": [
+    "Das Grundsicherungsgeld hat das Bürgergeld ab dem 01.07.2026 abgelöst; die Angaben gelten für Empfänger von Grundsicherungsgeld/Bürgergeld.",
+    "Voraussetzung: Die Selbstständigkeit wird hauptberuflich ausgeübt (mindestens 15 Stunden pro Woche) und man ist noch nicht hauptberuflich selbstständig.",
+    "Das Einstiegsgeld wird nur gewährt, wenn gute Aussichten bestehen, künftig nicht mehr auf Grundsicherungsgeld angewiesen zu sein.",
+    "Kein Rechtsanspruch: Die Integrationsfachkraft des Jobcenters entscheidet über Höhe und Dauer im Einzelfall.",
+    "Es gibt auch Einstiegsgeld für die Aufnahme einer sozialversicherungspflichtigen Beschäftigung.",
+    "Bedingungen im Einzelfall bei der zuständigen Stelle prüfen."
+  ],
+  "valid_until": "2026-12-31",
+  "last_verified": "2026-08-22",
+  "sources": [
+    "Agentur für Arbeit – Einstiegsgeld für eine Selbstständigkeit (arbeitsagentur.de)",
+    "Agentur für Arbeit – Einstiegsgeld für eine Beschäftigung (arbeitsagentur.de)",
+    "Jobcenter.digital (jobcenter.digital)",
+    "SGB II § 16b"
+  ]
+}

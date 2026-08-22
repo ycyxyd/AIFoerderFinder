@@ -1,0 +1,118 @@
+{
+  "id": "gruendungszuschuss",
+  "name": "Gründungszuschuss",
+  "category": "Existenzgründung",
+  "provider": "Agentur für Arbeit",
+  "description": "Zuschuss zur Sicherung des Lebensunterhalts und zur sozialen Absicherung beim Start in die hauptberufliche Selbstständigkeit aus der Arbeitslosigkeit.",
+  "target_group": [
+    "Arbeitslose mit Anspruch auf Arbeitslosengeld",
+    "Menschen mit Behinderungen nach § 19 SGB III"
+  ],
+  "eligibility_rules": [
+    {
+      "if": {
+        "receives_alg1": { "eq": true },
+        "starting_self_employment": { "eq": true }
+      },
+      "then": { "eligible": true }
+    }
+  ],
+  "exclusion_rules": [
+    {
+      "if": { "receives_alg1": { "neq": true } },
+      "then": {
+        "eligible": false,
+        "reason": "NO_ALG1_CLAIM",
+        "alternative": ["einstiegsgeld"]
+      }
+    }
+  ],
+  "risk_rules": [
+    {
+      "if": { "business_plan": { "neq": true } },
+      "then": {
+        "risk": "NO_BUSINESS_PLAN",
+        "message_key": "BUSINESS_PLAN_REQUIRED_FOR_STELLUNGNAHME"
+      }
+    },
+    {
+      "if": { "resigned_voluntarily": { "eq": true } },
+      "then": {
+        "risk": "SELF_INITIATED_UNEMPLOYMENT",
+        "message_key": "FUNDING_USUALLY_DENIED_AFTER_OWN_RESIGNATION"
+      }
+    }
+  ],
+  "benefits": {
+    "type": "money",
+    "description": "Phase 1: 6 Monate lang monatlich die Höhe des zuletzt erhaltenen Arbeitslosengeldes plus 300 Euro zur sozialen Absicherung. Phase 2: 9 Monate lang monatlich 300 Euro zur sozialen Absicherung. Der Zuschuss ist nicht einkommensteuerpflichtig."
+  },
+  "application": {
+    "authority": "Agentur für Arbeit",
+    "online": true,
+    "offline": false,
+    "links": [
+      "https://www.arbeitsagentur.de/arbeitslos-arbeit-finden/arbeitslosengeld/gruendungszuschuss-beantragen",
+      "https://www.arbeitsagentur.de/arbeitslos-arbeit-finden/arbeitslosengeld/existenzgruendung-gruendungszuschuss"
+    ]
+  },
+  "documents_required": [
+    "Stellungnahme einer fachkundigen Stelle zur Tragfähigkeit der Geschäftsidee (Vordruck BA GZ 04)",
+    "Beschreibung des Existenzgründungsvorhabens (Businessplan)",
+    "Kapitalbedarfs- und Finanzierungsplan",
+    "Umsatz- und Rentabilitätsvorschau",
+    "Lebenslauf",
+    "Qualifikationsnachweise (z. B. Zeugnisse, Zertifikate)"
+  ],
+  "steps": [
+    {
+      "step_id": "GZ_STEP_1",
+      "title": "Termin vereinbaren",
+      "when": "vor Beginn der Selbstständigkeit",
+      "explain": "Beratungsgespräch mit der Vermittlungsfachkraft der Agentur für Arbeit vereinbaren (telefonisch oder online). Die Fachkraft prüft, ob der Gründungszuschuss infrage kommt.",
+      "risk_if_missed": "Förderung nicht möglich, da keine Beratung und Prüfung stattfindet"
+    },
+    {
+      "step_id": "GZ_STEP_2",
+      "title": "Dokumente vorbereiten",
+      "when": "vor Antragstellung",
+      "explain": "Stellungnahme einer fachkundigen Stelle (z. B. IHK, HWK, Bank, Steuerberatung) zur Tragfähigkeit der Geschäftsidee einholen und weitere Unterlagen vorbereiten.",
+      "risk_if_missed": "Antrag kann nicht vollständig eingereicht werden"
+    },
+    {
+      "step_id": "GZ_STEP_3",
+      "title": "Antrag einreichen",
+      "when": "vor Beginn der Selbstständigkeit",
+      "explain": "Antrag auf Gründungszuschuss Phase 1 online stellen und Dokumente hochladen.",
+      "risk_if_missed": "Keine Förderung, wenn der Antrag nach Beginn der Selbstständigkeit gestellt wird"
+    },
+    {
+      "step_id": "GZ_STEP_4",
+      "title": "Gründungszuschuss Phase 1 erhalten",
+      "when": "nach Bewilligung",
+      "explain": "Nach positiver Prüfung wird der Gründungszuschuss 6 Monate lang ausgezahlt.",
+      "risk_if_missed": "Kein Zuschuss ohne positive Entscheidung der Agentur für Arbeit"
+    },
+    {
+      "step_id": "GZ_STEP_5",
+      "title": "Gründungszuschuss Phase 2 beantragen",
+      "when": "im Anschluss an Phase 1",
+      "explain": "Phase 2 separat online beantragen und hauptberufliche selbstständige Tätigkeit nachweisen.",
+      "risk_if_missed": "Kein Anschlusszuschuss (300 Euro monatlich) ohne eigenen Antrag und Nachweis"
+    }
+  ],
+  "notes": [
+    "Zu Beginn der Selbstständigkeit muss in der Regel noch ein Anspruch auf Arbeitslosengeld von mindestens 150 Tagen bestehen. Ausnahme: Menschen mit Behinderungen nach § 19 SGB III können den Zuschuss auch bei geringerem oder fehlendem Anspruch erhalten.",
+    "Hauptberuflich selbstständig bedeutet: mindestens 15 Stunden pro Woche selbstständige Tätigkeit; andere Tätigkeiten dürfen diesen Umfang in der Summe nicht übersteigen.",
+    "Die Tragfähigkeitsbescheinigung einer fachkundigen Stelle ist Voraussetzung; die Agentur für Arbeit übernimmt keine Kosten dafür.",
+    "Kein Rechtsanspruch: Die Agentur für Arbeit muss von den Erfolgsaussichten der Selbstständigkeit überzeugt sein (Ermessensleistung).",
+    "Bedingungen im Einzelfall bei der zuständigen Stelle prüfen."
+  ],
+  "valid_until": "2026-12-31",
+  "last_verified": "2026-08-22",
+  "sources": [
+    "Agentur für Arbeit – Gründungszuschuss beantragen (arbeitsagentur.de)",
+    "Agentur für Arbeit – Existenzgründung und Gründungszuschuss (arbeitsagentur.de)",
+    "SGB III §§ 93, 94"
+  ]
+}

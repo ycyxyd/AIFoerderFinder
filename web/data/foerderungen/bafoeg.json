@@ -1,0 +1,99 @@
+{
+  "id": "bafoeg",
+  "name": "BAföG (Bundesausbildungsförderungsgesetz)",
+  "category": "Ausbildung & Studium",
+  "provider": "Amt für Ausbildungsförderung (BAföG-Amt; an Hochschulen in der Regel das Studentenwerk)",
+  "description": "Staatliche Förderung der ersten Ausbildung für Schülerinnen und Schüler sowie Studierende an berufsbildenden Schulen, Kollegs, Akademien und Hochschulen, wenn die Familie die Ausbildung nicht finanzieren kann.",
+  "target_group": [
+    "Studierende",
+    "Schülerinnen und Schüler",
+    "Auszubildende"
+  ],
+  "eligibility_rules": [
+    {
+      "if": { "student": { "eq": true } },
+      "then": { "eligible": true }
+    },
+    {
+      "if": { "in_vocational_training": { "eq": true } },
+      "then": { "eligible": true }
+    }
+  ],
+  "exclusion_rules": [
+    {
+      "if": { "age": { "gte": 45 } },
+      "then": {
+        "eligible": false,
+        "reason": "AGE_LIMIT_EXCEEDED",
+        "alternative": []
+      }
+    }
+  ],
+  "risk_rules": [
+    {
+      "if": { "monthly_income": { "gt": 603 } },
+      "then": {
+        "risk": "INCOME_ABOVE_MINI_JOB_LIMIT",
+        "message_key": "HINZUVERDIENST_KANN_FOERDERUNG_REDUZIEREN"
+      }
+    }
+  ],
+  "benefits": {
+    "type": "money",
+    "description": "Förderungshöchstbetrag bis zu 992 Euro monatlich (Stand: Wintersemester 2024/25). Schülerinnen und Schüler erhalten BAföG als Vollzuschuss; Studierende zur Hälfte als Zuschuss und zur Hälfte als zinsloses Darlehen (Rückzahlung auf maximal 77 Raten begrenzt, aktuell höchstens 10.010 Euro). Hinzuverdienst bis zur Minijobgrenze bleibt anrechnungsfrei."
+  },
+  "application": {
+    "authority": "Amt für Ausbildungsförderung (BAföG-Amt; an Hochschulen in der Regel das Studentenwerk)",
+    "online": true,
+    "offline": true,
+    "links": [
+      "https://www.bafoeg.de/",
+      "https://bafoeg-digital.de/"
+    ]
+  },
+  "documents_required": [
+    "Ausgefülltes Antragsformblatt (elektronisch über BAföG-Digital oder als Formular)",
+    "Nachweise über eigenes Einkommen und Vermögen",
+    "Ggf. Nachweise über Einkommen und Vermögen der Eltern",
+    "Ggf. weitere Nachweise je nach Ausbildungsform und Einzelfall"
+  ],
+  "steps": [
+    {
+      "step_id": "BAFOEG_STEP_1",
+      "title": "Zuständiges Amt für Ausbildungsförderung ermitteln",
+      "when": "vor Ausbildungsbeginn",
+      "explain": "Für Studierende ist in der Regel das Studentenwerk zuständig, für Schülerinnen und Schüler das örtliche BAföG-Amt.",
+      "risk_if_missed": "Antrag beim falschen Amt verzögert die Bearbeitung"
+    },
+    {
+      "step_id": "BAFOEG_STEP_2",
+      "title": "Antrag stellen",
+      "when": "spätestens im Monat des Ausbildungsbeginns",
+      "explain": "Antrag elektronisch über BAföG-Digital oder mit dem Antragsformblatt per Post, Fax oder E-Mail beim zuständigen Amt für Ausbildungsförderung stellen.",
+      "risk_if_missed": "Geld gibt es erst ab dem Monat der Antragstellung – für Monate davor wird kein BAföG rückwirkend gezahlt"
+    },
+    {
+      "step_id": "BAFOEG_STEP_3",
+      "title": "Unterlagen einreichen",
+      "when": "mit dem Antrag bzw. auf Anforderung des Amtes",
+      "explain": "Nachweise zu eigenem Einkommen und Vermögen sowie ggf. zu Einkommen und Vermögen der Eltern einreichen.",
+      "risk_if_missed": "Unvollständige Unterlagen verzögern die Bearbeitung und damit den Beginn der Zahlung"
+    }
+  ],
+  "notes": [
+    "Altersgrenze: Grundsätzlich darf bei Beginn der Ausbildung das 45. Lebensjahr noch nicht vollendet sein; es gibt einige Ausnahmen.",
+    "Gefördert wird grundsätzlich nur die erste Ausbildung (Erstausbildung) bis zum berufsqualifizierenden Abschluss; nach einem Bachelor kann zum Beispiel noch ein Masterstudium gefördert werden.",
+    "Die Höhe der Förderung hängt vom Bedarfssatz sowie von Einkommen und Vermögen der Auszubildenden und vom Einkommen der Eltern ab (Elternfreibetrag nach der Anhebung um 5,25 Prozent: 2.540 Euro, bei dauernd getrennt lebenden Eltern jeweils 1.650 Euro).",
+    "Weitere persönliche Voraussetzungen: Staatsangehörigkeit bzw. aufenthaltsrechtlicher Status und Eignung für die gewünschte Ausbildung; privates Einkommen und Vermögen werden angerechnet.",
+    "Studienstarthilfe (1.000 Euro): eigenes Förderinstrument für Studienanfängerinnen und -anfänger mit Sozialleistungsbezug, die bei Beginn des Ausbildungsabschnitts das 25. Lebensjahr noch nicht vollendet haben und sich erstmalig immatrikulieren.",
+    "Bedingungen im Einzelfall bei der zuständigen Stelle prüfen."
+  ],
+  "valid_until": "2026-12-31",
+  "last_verified": "2026-08-22",
+  "sources": [
+    "BAföG – Das BAföG: alle Infos auf einen Blick (bafoeg.de)",
+    "BAföG – Fragen und Antworten (bafoeg.de)",
+    "BAföG – Einzelfragen der Förderung (bafoeg.de)",
+    "BAföG – Förderungsarten und Förderungshöhe (bafoeg.de)"
+  ]
+}

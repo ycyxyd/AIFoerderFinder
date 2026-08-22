@@ -1,0 +1,84 @@
+{
+  "id": "bildungsgutschein",
+  "name": "Bildungsgutschein",
+  "category": "Weiterbildung",
+  "provider": "Agentur für Arbeit",
+  "description": "Übernahme der Kosten einer beruflichen Weiterbildung (z. B. Anpassungsqualifizierung, Umschulung, Teilqualifizierung) zur Verbesserung der individuellen Beschäftigungsfähigkeit; der Gutschein ist in der Regel zeitlich befristet, regional begrenzt und auf ein bestimmtes Bildungsziel beschränkt.",
+  "target_group": [
+    "Arbeitslose",
+    "Von Arbeitslosigkeit bedrohte Menschen",
+    "Kundinnen und Kunden des Jobcenters (seit 01.01.2025)",
+    "Beschäftigte (Förderung der beruflichen Weiterbildung von Beschäftigten)"
+  ],
+  "eligibility_rules": [
+    {
+      "if": { "employment_status": { "eq": "unemployed" } },
+      "then": { "eligible": true }
+    },
+    {
+      "if": { "receives_buergergeld": { "eq": true } },
+      "then": { "eligible": true }
+    }
+  ],
+  "exclusion_rules": [],
+  "risk_rules": [],
+  "benefits": {
+    "type": "mixed",
+    "description": "Übernahme der Lehrgangsgebühren einschließlich der Kosten für erforderliche Lernmittel, Arbeitskleidung und Prüfungsgebühren sowie von Fahrkosten, Kosten für Kinderbetreuung während der Weiterbildung und ggf. Kosten für auswärtige Unterbringung und Verpflegung. Zusätzlich: Weiterbildungsgeld 150 Euro monatlich bei abschlussorientierter Weiterbildung; Weiterbildungsprämie 1.000 Euro nach bestandener Zwischenprüfung bzw. 1.500 Euro nach bestandener Abschlussprüfung. Während des Bezugs von Arbeitslosengeld wird dieses bei Beginn einer beruflichen Weiterbildung in der Regel weitergezahlt."
+  },
+  "application": {
+    "authority": "Agentur für Arbeit (persönliches Beratungsgespräch)",
+    "online": true,
+    "offline": true,
+    "links": [
+      "https://www.arbeitsagentur.de/karriere-und-weiterbildung/bildungsgutschein"
+    ]
+  },
+  "documents_required": [],
+  "steps": [
+    {
+      "step_id": "BGS_STEP_1",
+      "title": "Kontakt aufnehmen",
+      "when": "vor Beginn der Weiterbildung",
+      "explain": "Kontakt mit der Agentur für Arbeit bzw. dem Jobcenter aufnehmen (online anfragen); Sie werden anschließend zu einem Beratungsgespräch eingeladen.",
+      "risk_if_missed": "Keine Förderung ohne vorherige Beratung"
+    },
+    {
+      "step_id": "BGS_STEP_2",
+      "title": "Beraten lassen",
+      "when": "im persönlichen Beratungsgespräch",
+      "explain": "Im Beratungsgespräch werden die individuellen Voraussetzungen und die Notwendigkeit der Weiterbildung geprüft. Liegen alle Voraussetzungen vor, erhalten Sie einen Bildungsgutschein.",
+      "risk_if_missed": "Ohne Anerkennung der Weiterbildungsnotwendigkeit kein Bildungsgutschein"
+    },
+    {
+      "step_id": "BGS_STEP_3",
+      "title": "Weiterbildung finden",
+      "when": "nach Erhalt des Bildungsgutscheins",
+      "explain": "Passende Weiterbildung oder Umschulung in der Weiterbildungssuche von mein NOW finden. Der Bildungsträger und die Weiterbildung müssen von einer fachkundigen Stelle zugelassen sein.",
+      "risk_if_missed": "Kosten werden nur für zugelassene Träger und zugelassene Weiterbildungen übernommen"
+    },
+    {
+      "step_id": "BGS_STEP_4",
+      "title": "Unterlagen übermitteln",
+      "when": "während der Teilnahme an der Weiterbildung",
+      "explain": "Erforderliche Nachweise während der Weiterbildung online übermitteln.",
+      "risk_if_missed": "Verzögerung oder Beendigung der Kostenübernahme"
+    }
+  ],
+  "notes": [
+    "Einen Bildungsgutschein erhalten Sie, wenn die Weiterbildung notwendig ist, damit Ihre Arbeitslosigkeit beendet oder die drohende Arbeitslosigkeit abgewendet werden kann (Fachbegriff: Erweiterungs- bzw. Anpassungsqualifizierung).",
+    "Die individuellen Voraussetzungen werden im persönlichen Beratungsgespräch mit der Agentur für Arbeit geklärt; die offizielle Seite nennt keinen zwingenden Anspruch auf Arbeitslosengeld als Voraussetzung.",
+    "Arbeitslose können gefördert werden, wenn die Notwendigkeit der beruflichen Weiterbildung zur Vermittlung zusätzlicher oder ergänzender Qualifikationen anerkannt wird; auch der Erwerb von Grundkompetenzen (Lesen, Schreiben, Mathematik, IKT) kann gefördert werden.",
+    "Der von Ihnen ausgewählte Bildungsträger und die berufliche Weiterbildung müssen von einer fachkundigen Stelle zugelassen sein.",
+    "Auf die Förderung des nachträglichen Erwerbs eines Berufsabschlusses sowie eines Hauptschul- oder vergleichbaren Schulabschlusses besteht unter bestimmten Voraussetzungen ein Rechtsanspruch.",
+    "Ab dem 01.01.2025 erfolgt die finanzielle Unterstützung auch für Kundinnen und Kunden des Jobcenters durch die Agentur für Arbeit.",
+    "Rechtsgrundlage: § 81 SGB III.",
+    "Bedingungen im Einzelfall bei der zuständigen Stelle prüfen."
+  ],
+  "valid_until": "2026-12-31",
+  "last_verified": "2026-08-22",
+  "sources": [
+    "Bundesagentur für Arbeit – Bildungsgutschein für berufliche Weiterbildung (arbeitsagentur.de)",
+    "SGB III § 81"
+  ]
+}

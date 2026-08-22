@@ -1,0 +1,154 @@
+{
+  "id": "buergergeld",
+  "name": "Bürgergeld (Grundsicherungsgeld)",
+  "category": "Grundsicherung",
+  "provider": "Jobcenter (gemeinsame Einrichtung oder zugelassener kommunaler Träger)",
+  "description": "Grundsicherung für Arbeitsuchende nach dem SGB II: sichert den Lebensunterhalt erwerbsfähiger Menschen, die ihren Bedarf nicht aus eigenem Einkommen oder Vermögen decken können. Seit dem 01.07.2026 wird die Leistung als 'Grundsicherungsgeld' bezeichnet und löst das Bürgergeld ab.",
+  "target_group": [
+    "erwerbsfähige Personen ab 15 Jahren bis zur Regelaltersgrenze",
+    "Bedarfsgemeinschaften (Partner, Kinder)"
+  ],
+  "eligibility_rules": [
+    {
+      "if": { "age": { "gte": 15 } },
+      "then": { "eligible": true }
+    }
+  ],
+  "exclusion_rules": [
+    {
+      "if": { "age": { "lt": 15 } },
+      "then": {
+        "eligible": false,
+        "reason": "UNTER_15_KEIN_EIGENER_ANSPRUCH",
+        "alternative": []
+      }
+    },
+    {
+      "if": { "employment_status": { "eq": "retired" } },
+      "then": {
+        "eligible": false,
+        "reason": "ALTERSRENTE_VORRANG",
+        "alternative": []
+      }
+    },
+    {
+      "if": { "age": { "gte": 67 } },
+      "then": {
+        "eligible": false,
+        "reason": "REGELRENTENALTER_ERREICHT",
+        "alternative": []
+      }
+    }
+  ],
+  "risk_rules": [
+    {
+      "if": { "student": true },
+      "then": { "risk": "STUDENT_BAFOG_VORRANG", "message_key": "BAFOG_VORRANG_PRUEFFEN" }
+    },
+    {
+      "if": { "assets_total": { "gt": 5000 }, "age": { "lte": 30 } },
+      "then": { "risk": "VERMOEGEN_UEBER_FREIBETRAG", "message_key": "FREIBETRAG_5000_BIS_30" }
+    },
+    {
+      "if": { "assets_total": { "gt": 10000 }, "age": { "in": [31, 32, 33, 34, 35, 36, 37, 38, 39, 40] } },
+      "then": { "risk": "VERMOEGEN_UEBER_FREIBETRAG", "message_key": "FREIBETRAG_10000_AB_31" }
+    },
+    {
+      "if": { "assets_total": { "gt": 12500 }, "age": { "in": [41, 42, 43, 44, 45, 46, 47, 48, 49, 50] } },
+      "then": { "risk": "VERMOEGEN_UEBER_FREIBETRAG", "message_key": "FREIBETRAG_12500_AB_41" }
+    },
+    {
+      "if": { "assets_total": { "gt": 20000 }, "age": { "gte": 51 } },
+      "then": { "risk": "VERMOEGEN_UEBER_FREIBETRAG", "message_key": "FREIBETRAG_20000_AB_51" }
+    },
+    {
+      "if": { "has_property": true },
+      "then": { "risk": "EIGENTUM_PRUEFEN", "message_key": "SELBSTGENUTZTES_EIGENTUM_BIS_140_QM_GESCHUETZT" }
+    }
+  ],
+  "benefits": {
+    "type": "money",
+    "description": "Regelbedarf zur Sicherung des Lebensunterhalts (2026: Regelbedarfsstufe 1 für Alleinstehende/Alleinerziehende 563 Euro pro Monat, Stufe 2 für Partner je 506 Euro pro Monat) zuzueglich angemessener Kosten fuer Unterkunft und Heizung sowie ggf. Mehrbedarfe; daneben Beratung und Eingliederungsleistungen des Jobcenters."
+  },
+  "application": {
+    "authority": "Jobcenter (gemeinsame Einrichtung oder zugelassener kommunaler Träger)",
+    "online": true,
+    "offline": true,
+    "links": [
+      "https://www.arbeitsagentur.de/grundsicherung/grundsicherungsgeld-beantragen",
+      "https://www.arbeitsagentur.de/grundsicherung/finanziell-absichern/antrag-bescheid",
+      "https://www.jobcenter.digital/",
+      "https://www.gesetze-im-internet.de/sgb_2/"
+    ]
+  },
+  "documents_required": [
+    "Identitätsnachweis (Personalausweis oder Reisepass)",
+    "Nachweise über Einkommen (z. B. Gehaltsabrechnungen, bei Arbeitslosigkeit Arbeitsbescheinigung)",
+    "Mietvertrag und Nachweise zu den Unterkunftskosten",
+    "Kontoauszüge und Unterlagen zu weiteren Ausgaben",
+    "Nachweise über Vermögen (Anlage zur Selbstauskunft / Feststellung der Vermögensverhältnisse der Bedarfsgemeinschaft), auf Anforderung",
+    "Ggf. frühere Bewilligungsbescheide oder Leistungsnachweise"
+  ],
+  "steps": [
+    {
+      "step_id": "BG_STEP_1",
+      "title": "Benutzerkonto anlegen oder anmelden",
+      "when": "vor dem Online-Antrag",
+      "explain": "Der Online-Antrag läuft über das Benutzerkonto bei der Bundesagentur für Arbeit; alternativ ist der Antrag in Papierform beim zuständigen Jobcenter möglich.",
+      "risk_if_missed": "Ohne Benutzerkonto ist kein Online-Antrag möglich (Papierform bleibt aber möglich)"
+    },
+    {
+      "step_id": "BG_STEP_2",
+      "title": "Online-Antrag erstellen und ausfüllen",
+      "when": "sobald absehbar ist, dass Einkommen oder Vermögen den Lebensunterhalt nicht decken",
+      "explain": "Persönliche Daten sowie Angaben zu Einkommen, Vermögen und Wohnsituation eintragen; Nachweise können direkt hochgeladen werden.",
+      "risk_if_missed": "Leistungen werden nicht für Zeiten vor der Antragstellung erbracht; der Antrag wirkt nur auf den Ersten des Antragsmonats zurück (SGB II § 37)"
+    },
+    {
+      "step_id": "BG_STEP_3",
+      "title": "Nachweise einreichen",
+      "when": "mit dem Antrag oder zeitnah danach",
+      "explain": "Angaben müssen durch Nachweise belegt werden (z. B. Mietvertrag, Einkommensnachweise). Keine Originale einreichen: Unterlagen werden digitalisiert und nach 8 Wochen vernichtet.",
+      "risk_if_missed": "Der Antrag kann erst nach Eingang aller notwendigen Nachweise abschließend geprüft werden"
+    },
+    {
+      "step_id": "BG_STEP_4",
+      "title": "Antrag übermitteln",
+      "when": "nach dem Ausfüllen",
+      "explain": "Antrag online an das zuständige Jobcenter übermitteln oder in Papierform per Post oder persönlich abgeben.",
+      "risk_if_missed": "Erst nach Übermittlung beginnt die Bearbeitung"
+    },
+    {
+      "step_id": "BG_STEP_5",
+      "title": "Bescheid abwarten und prüfen",
+      "when": "nach der abschließenden Prüfung durch das Jobcenter",
+      "explain": "Das Jobcenter prüft den Anspruch und erlässt einen Bescheid; die Angaben im Bescheid sollten geprüft werden.",
+      "risk_if_missed": "Gegen den Bescheid kann nur innerhalb eines Monats nach Bekanntgabe Einspruch eingelegt werden"
+    },
+    {
+      "step_id": "BG_STEP_6",
+      "title": "Beratungsgespräch beim Jobcenter vorbereiten",
+      "when": "nach der Antragstellung",
+      "explain": "Das Jobcenter lädt in der Regel zu einem Beratungsgespräch ein (z. B. zur beruflichen Zukunft); das persönliche Arbeitsmarktprofil kann online ausgefüllt werden.",
+      "risk_if_missed": "Versäumte Termine können leistungsrechtliche Folgen haben"
+    }
+  ],
+  "notes": [
+    "Seit dem 01.07.2026 wird die Leistung als 'Grundsicherungsgeld' bezeichnet und löst das Bürgergeld ab; Formulare und Online-Services bleiben gültig, bereits erlassene Bescheide bleiben inhaltlich gültig (Bundesagentur für Arbeit).",
+    "Einkommen wird auf den individuellen Bedarf (Regelbedarf plus Kosten für Unterkunft und Heizung plus ggf. Mehrbedarfe) angerechnet. Einen pauschalen Einkommenshöchstwert gibt es nicht - Bedingungen im Einzelfall bei der zuständigen Stelle prüfen.",
+    "Vermögensfreibeträge (SGB II § 12 Abs. 2, Stand 2026): bis zur Vollendung des 30. Lebensjahres 5.000 Euro, ab dem 31. Lebensjahr 10.000 Euro, ab dem 41. Lebensjahr 12.500 Euro, ab dem 51. Lebensjahr 20.000 Euro; nicht ausgeschöpfte Freibeträge anderer Personen der Bedarfsgemeinschaft können übertragen werden. Für Bewilligungszeiträume, die vor dem 01.07.2026 begonnen haben, können Übergangsregelungen gelten.",
+    "Nicht als Vermögen berücksichtigt werden u. a. angemessener Hausrat, ein angemessenes Kraftfahrzeug je erwerbsfähiger Person, für die Altersvorsorge bestimmte Verträge sowie ein selbst genutztes Hausgrundstück bis 140 qm bzw. eine selbst genutzte Eigentumswohnung bis 130 qm (SGB II § 12 Abs. 1).",
+    "Voraussetzungen: vollendetes 15. Lebensjahr, Erwerbsfähigkeit, Hilfebedürftigkeit und gewöhnlicher Aufenthalt in Deutschland (SGB II § 7). Auszubildende in BAföG-förderungsfähiger Ausbildung haben in der Regel keinen Anspruch auf Leistungen zur Sicherung des Lebensunterhalts (SGB II § 7 Abs. 5); Personen, die Rente wegen Alters beziehen, sind ausgeschlossen (SGB II § 7 Abs. 4).",
+    "Regelbedarf 2026 (unverändert seit 2024): Alleinstehende/Alleinerziehende 563 Euro, Partner je 506 Euro, Jugendliche (14-17 Jahre) 471 Euro, Kinder (6-13 Jahre) 390 Euro, Kinder (0-5 Jahre) 357 Euro pro Monat (bundesregierung.de).",
+    "Bedingungen im Einzelfall bei der zuständigen Stelle prüfen."
+  ],
+  "valid_until": "2026-12-31",
+  "last_verified": "2026-08-22",
+  "sources": [
+    "Bundesagentur für Arbeit – Grundsicherungsgeld beantragen (arbeitsagentur.de)",
+    "Bundesagentur für Arbeit – Antrag und Bescheid: Nachweise (arbeitsagentur.de)",
+    "Jobcenter.digital – Unterstützung durch Grundsicherungsgeld (jobcenter.digital)",
+    "SGB II §§ 7, 7a, 12, 20, 37 (gesetze-im-internet.de)",
+    "Bundesregierung – Regelbedarfe 2026: Nullrunde (bundesregierung.de)"
+  ]
+}
