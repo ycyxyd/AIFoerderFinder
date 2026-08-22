@@ -24,6 +24,8 @@ export default function ResultsPage() {
       const raw = localStorage.getItem('foerderfinder.check');
       if (!raw) return;
       const parsed = JSON.parse(raw) as { decisions: DecisionSnapshot[] };
+      // Intentional: hydrate client-side persisted check from localStorage.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDecisions(parsed.decisions);
     } catch {
       setDecisions([]);
