@@ -70,4 +70,5 @@ pnpm dev        # Entwicklung (http://127.0.0.1:3000)
 pnpm test       # Vitest (Engine + Intent)
 pnpm typecheck  # tsc --noEmit
 pnpm build      # Produktions-Build
+node scripts/validate-fundings.mjs   # Review-Gate für data/foerderungen/*.json
 ```
