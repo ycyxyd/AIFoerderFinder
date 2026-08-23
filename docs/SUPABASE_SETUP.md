@@ -17,6 +17,21 @@ Das legt an:
 - `chat_sessions`, `chat_messages`, `audit_logs`
 - Row-Level-Security-Policies auf allen Tabellen
 
+Anschließend `web/supabase/migrations/0002_fix_funding_fk.sql` ausführen
+(entfernt den FK `eligibility_decisions.funding_id → fundings(id)`: die
+`fundings`-Tabelle ist im MVP optional — die Regel-Engine lädt Schemas aus
+`data/foerderungen/*.json`, nicht aus der DB).
+
+## 1b. Fundings-Spiegel befüllen (optional, für Backoffice)
+
+```bash
+cd web && node scripts/seed-fundings.mjs
+```
+
+Upsertet alle `data/foerderungen/*.json` in die `fundings`-Tabelle
+(`SUPABASE_SERVICE_ROLE_KEY` aus `.env.local`). Nach jedem Daten-Update erneut
+ausführen.
+
 ## 2. Umgebungsvariablen
 
 In `web/.env.local` (NIE committen):
