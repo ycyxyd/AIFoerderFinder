@@ -19,7 +19,9 @@ const config: CapacitorConfig = {
   webDir: 'out',
   server: {
     url: 'http://10.0.2.2:3000',
-    cleartext: true,
+    // Network security config (res/xml/network_security_config.xml) permits
+    // cleartext ONLY to the dev host 10.0.2.2; everything else is blocked.
+    cleartext: false,
   },
   android: {
     // Allow http:// only for the dev server origin; tighten for release.

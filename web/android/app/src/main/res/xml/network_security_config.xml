@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  FörderFinder — Network Security Config
+  Default: cleartext traffic FORBIDDEN everywhere (production-safe).
+  Dev only: allow cleartext to the Android-emulator host loopback (10.0.2.2)
+  so the WebView can reach the local Next.js dev server.
+  REMOVE the 10.0.2.2 entry before release.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>
