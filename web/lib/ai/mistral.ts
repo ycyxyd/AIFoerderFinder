@@ -12,6 +12,8 @@ export interface MistralConfig {
   apiKey?: string;
   baseUrl?: string;
   model?: string;
+  /** Fallback model used when the primary is rate-limited / errors (e.g. free-tier 429s). */
+  fallbackModel?: string;
   maxTokens?: number;
   temperature?: number;
 }
@@ -23,6 +25,7 @@ export function getMistralConfig(): MistralConfig {
     apiKey: env('MISTRAL_API_KEY'),
     baseUrl: env('MISTRAL_BASE_URL') ?? 'https://api.mistral.ai/v1',
     model: env('MISTRAL_MODEL') ?? 'mistral-small-latest',
+    fallbackModel: env('MISTRAL_FALLBACK_MODEL'),
     maxTokens: Number(env('MISTRAL_MAX_TOKENS') ?? 800),
     temperature: 0.2, // low = stable, factual tone
   };
@@ -51,6 +54,30 @@ export async function chatCompletion(
     throw new MistralError('MISTRAL_API_KEY is not configured');
   }
 
+  const models = [config.model, config.fallbackModel].filter((m): m is string => Boolean(m));
+  let lastError: MistralError | null = null;
+
+  for (const model of models) {
+    try {
+      return await chatCompletionOnce(messages, config, model);
+    } catch (err) {
+      const m = err instanceof MistralError ? err : new MistralError(String(err));
+      lastError = m;
+      // Only fall back on rate limits / server errors — NOT on prompt issues.
+      if (m.status === undefined || (m.status >= 400 && m.status < 500 && m.status !== 429)) {
+        throw m;
+      }
+    }
+  }
+
+  throw lastError ?? new MistralError('No model available');
+}
+
+async function chatCompletionOnce(
+  messages: ChatMessage[],
+  config: MistralConfig,
+  model: string
+): Promise<string> {
   const authScheme = 'Bearer';
   const res = await fetch(`${config.baseUrl}/chat/completions`, {
     method: 'POST',
@@ -59,7 +86,7 @@ export async function chatCompletion(
       Authorization: `${authScheme} ${config.apiKey}`,
     },
     body: JSON.stringify({
-      model: config.model,
+      model,
       messages,
       temperature: config.temperature,
       max_tokens: config.maxTokens,
@@ -72,7 +99,7 @@ export async function chatCompletion(
   }
 
   const data = (await res.json()) as {
-    choices?: { message?: { content?: string } }[];
+    choices?: { message?: { content?: string | null } }[];
   };
   const content = data.choices?.[0]?.message?.content;
   if (!content) {

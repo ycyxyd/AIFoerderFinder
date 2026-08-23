@@ -134,6 +134,12 @@ export function getRepository(): DecisionRepository {
     supabaseRepo ??= new SupabaseRepository();
     return supabaseRepo;
   }
+  return getMemoryRepository();
+}
+
+/** Always-available in-process store — used as fallback when Supabase is
+ *  configured but unreachable (e.g. migration not applied yet). */
+export function getMemoryRepository(): DecisionRepository {
   memoryRepo ??= new MemoryRepository();
   return memoryRepo;
 }

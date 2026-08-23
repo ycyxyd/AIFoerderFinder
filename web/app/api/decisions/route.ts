@@ -10,14 +10,20 @@ import { NextResponse } from 'next/server';
 import type { UserProfile } from '../../../lib/types';
 import { evaluateAll } from '../../../lib/engine/evaluator';
 import { loadFundings } from '../../../lib/engine/registry';
-import { getRepository } from '../../../lib/db/repository';
+import { getMemoryRepository, getRepository } from '../../../lib/db/repository';
 
-// Convenience accessor for the explain route (shares the same repository).
+// Convenience accessor for the explain route. Tries the primary repository,
+// then the in-process fallback (works while Supabase migration is pending).
 export async function getDecision(decisionId: string) {
   try {
-    return await getRepository().getDecision(decisionId);
+    const d = await getRepository().getDecision(decisionId);
+    if (d) return d;
   } catch (err) {
-    console.error('[api/decisions] read failed:', err);
+    console.error('[api/decisions] primary read failed:', err);
+  }
+  try {
+    return await getMemoryRepository().getDecision(decisionId);
+  } catch {
     return null;
   }
 }
@@ -46,9 +52,15 @@ export async function POST(request: Request) {
     try {
       await repo.saveDecisions(results);
     } catch (err) {
-      // e.g. tables not migrated yet -> keep the response usable, log loudly.
+      // e.g. tables not migrated yet -> keep the response usable, log loudly,
+      // and mirror the snapshots into the in-process store so reads work.
       persisted = false;
-      console.error('[api/decisions] persist failed (running memory-only):', err);
+      console.error('[api/decisions] persist failed (falling back to memory):', err);
+      try {
+        await getMemoryRepository().saveDecisions(results);
+      } catch (memErr) {
+        console.error('[api/decisions] memory fallback failed:', memErr);
+      }
     }
 
     return NextResponse.json({ decisions: results, persisted });

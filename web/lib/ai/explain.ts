@@ -54,6 +54,14 @@ export function buildDecisionContext(input: ExplainInput): string {
     ? funding.steps.map((s) => `- ${s.title}`).join('\n')
     : '- (keine hinterlegt)';
 
+  const verifiedNotes = funding?.notes?.length
+    ? funding.notes.map((n) => `- ${n}`).join('\n')
+    : '- (keine hinterlegt)';
+
+  const documents = funding?.documents_required?.length
+    ? funding.documents_required.map((d) => `- ${d}`).join('\n')
+    : '- (keine hinterlegt)';
+
   return [
     'ENTSCHEDUNGSERGEBNIS (vorgegeben, NICHT änderbar):',
     `Förderung: ${decision.funding_name} (${decision.funding_id})`,
@@ -70,6 +78,12 @@ export function buildDecisionContext(input: ExplainInput): string {
     '',
     'TYPISCHE SCHRITTE:',
     steps,
+    '',
+    'VERIFIZIERTE HINWEISE ZUR FÖRDERUNG (aus der Datenbank — bitte wörtlich übernehmen):',
+    verifiedNotes,
+    '',
+    'NOTWENDIGE UNTERLAGEN:',
+    documents,
     '',
     'OFFIZIELLE STELLEN & LINKS:',
     links,
@@ -140,6 +154,7 @@ export async function explainDecision(input: ExplainInput): Promise<ExplainOutpu
     input.question,
     '',
     'Antworte auf Deutsch, sachlich, nach der vorgegebenen Antwortstruktur.',
+    'WICHTIG: Nenne NUR Voraussetzungen, Zahlen und Details, die in den obigen verifizierten Hinweisen stehen. Nichts aus dem Gedächtnis ergänzen.',
   ].join('\n');
 
   try {
