@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">FörderFinder</string>
+    <string name="title_activity_main">FörderFinder</string>
+    <string name="package_name">de.steuerassist.foerderfinder</string>
+    <string name="custom_url_scheme">de.steuerassist.foerderfinder</string>
+</resources>
