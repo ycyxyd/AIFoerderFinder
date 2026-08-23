@@ -84,14 +84,16 @@
     "Nach Abschluss einer erstmaligen Berufsausbildung oder eines Erststudiums wird das Kind nur berücksichtigt, wenn es keiner Erwerbstätigkeit nachgeht; unschädlich sind eine Erwerbstätigkeit mit bis zu 20 Wochenstunden, ein Ausbildungsdienstverhältnis oder eine geringfügige Beschäftigung (EStG § 32 Abs. 4).",
     "Für Kinder mit Behinderung, die vor Vollendung des 25. Lebensjahres eingetreten ist, kann Kindergeld über das 25. Lebensjahr hinaus gezahlt werden (EStG § 32 Abs. 4).",
     "Kindergeld wird 6 Monate rückwirkend gezahlt; der Antrag sollte daher rechtzeitig gestellt werden.",
+    "Der Kindergeldbetrag wird jährlich angepasst (im Zusammenhang mit dem Kinderfreibetrag, EStG § 66 Abs. 3); maßgeblich ist die jeweils gültige Fassung des EStG.",
     "Die Regeln sind vereinfacht; Bedingungen im Einzelfall bei der Familienkasse prüfen."
   ],
   "valid_until": "2026-12-31",
-  "last_verified": "2026-08-22",
+  "last_verified": "2026-08-23",
   "sources": [
     "Einkommensteuergesetz (EStG) §§ 32, 66 (gesetze-im-internet.de)",
     "Bundesagentur für Arbeit – Kindergeld: Anspruch, Höhe, Dauer (arbeitsagentur.de)",
     "Bundesagentur für Arbeit – Kindergeld ab 18 Jahren (arbeitsagentur.de)",
-    "Familienkasse (familienkasse.de)"
+    "Familienkasse (familienkasse.de)",
+    "Bundesministerium für Familie, Senioren, Frauen und Jugend – Kindergeld (bmbfsfj.bund.de)"
   ]
 }
