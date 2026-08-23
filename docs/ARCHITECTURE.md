@@ -25,6 +25,7 @@ User Input → Intent Detection → Policy Gate → Decision Store (read-only)
 | Förder-Registry | `lib/engine/registry.ts` | Lädt `data/foerderungen/*.json` (server-only) |
 | Intent Detection | `lib/intent/detector.ts` | Keyword-Regeln, vor jedem LLM-Call |
 | Policy Gate | `lib/intent/policy.ts` | Sperrt gefährliche Intents, deutsche Vorlagen |
+| Rate Limiting | `lib/ratelimit.ts` | Sliding-Window pro Client-IP (In-Memory); /api/explain, /api/decisions, /api/auth/* |
 | AI Explain | `lib/ai/explain.ts` | Einziger LLM-Aufruf; bekommt nur Decision-Snapshot |
 | Response Filter | `lib/ai/response-filter.ts` | Neutralisiert verbotene Formulierungen |
 | API | `app/api/` | decisions (erzeugen), explain (Chat), fundings (Meta) |

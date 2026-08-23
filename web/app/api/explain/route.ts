@@ -13,9 +13,22 @@ import { explainDecision } from '../../../lib/ai/explain';
 import { getFunding } from '../../../lib/engine/registry';
 import { getDecision } from '../decisions/route';
 import { getRepository } from '../../../lib/db/repository';
+import {
+  rateLimit,
+  readRateLimitConfig,
+  getClientKey,
+  tooManyRequests,
+} from '../../../lib/ratelimit';
+
+// The AI endpoint is the costly one: 20 requests / 60 s per client by default
+// (override via RATE_LIMIT_MAX / RATE_LIMIT_WINDOW_MS).
+const { max: EXPLAIN_MAX, windowMs: EXPLAIN_WINDOW } = readRateLimitConfig();
 
 export async function POST(request: Request) {
   try {
+    const { allowed, resetAt } = rateLimit(getClientKey(request), EXPLAIN_MAX, EXPLAIN_WINDOW);
+    if (!allowed) return tooManyRequests(resetAt);
+
     const body = (await request.json()) as {
       decision_id?: string;
       question?: string;

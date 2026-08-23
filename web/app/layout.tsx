@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'FörderFinder – Orientierung zu Förderprogrammen',
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="de">
       <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
         {children}
+        <Footer />
       </body>
     </html>
   );

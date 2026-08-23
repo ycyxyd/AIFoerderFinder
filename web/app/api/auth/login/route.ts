@@ -6,8 +6,21 @@
 
 import { NextResponse } from 'next/server';
 import { getAdminClient, supabaseConfigured } from '../../../../lib/db/server';
+import {
+  rateLimit,
+  readRateLimitConfig,
+  getClientKey,
+  tooManyRequests,
+} from '../../../../lib/ratelimit';
+
+// Brute-force protection: limited attempts per window per client
+// (RATE_LIMIT_MAX / RATE_LIMIT_WINDOW_MS; default 20 / 60 s).
+const { max: AUTH_MAX, windowMs: AUTH_WINDOW } = readRateLimitConfig();
 
 export async function POST(request: Request) {
+  const { allowed, resetAt } = rateLimit(getClientKey(request), AUTH_MAX, AUTH_WINDOW);
+  if (!allowed) return tooManyRequests(resetAt);
+
   if (!supabaseConfigured()) {
     return NextResponse.json(
       { error: 'Supabase nicht konfiguriert (SUPABASE_SERVICE_ROLE_KEY fehlt).' },

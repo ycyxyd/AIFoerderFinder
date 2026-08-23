@@ -11,6 +11,15 @@ import type { UserProfile } from '../../../lib/types';
 import { evaluateAll } from '../../../lib/engine/evaluator';
 import { loadFundings } from '../../../lib/engine/registry';
 import { getMemoryRepository, getRepository } from '../../../lib/db/repository';
+import {
+  rateLimit,
+  readRateLimitConfig,
+  getClientKey,
+  tooManyRequests,
+} from '../../../lib/ratelimit';
+
+// Cheaper than the AI call but still writes DB rows: 30 requests / 60 s.
+const { max: DECISIONS_MAX, windowMs: DECISIONS_WINDOW } = readRateLimitConfig();
 
 // Convenience accessor for the explain route. Tries the primary repository,
 // then the in-process fallback (works while Supabase migration is pending).
@@ -30,6 +39,9 @@ export async function getDecision(decisionId: string) {
 
 export async function POST(request: Request) {
   try {
+    const { allowed, resetAt } = rateLimit(getClientKey(request), DECISIONS_MAX, DECISIONS_WINDOW);
+    if (!allowed) return tooManyRequests(resetAt);
+
     const body = (await request.json()) as {
       profile?: Partial<UserProfile>;
       user_id?: string;
