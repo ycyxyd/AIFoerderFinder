@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import type { DecisionSnapshot, UserProfile } from '../../lib/types';
-import AdSlot, { bumpAdInteractions } from '../../components/AdSlot';
+import AdSlot, { bumpAdInteractions, fireAdEvent } from '../../components/AdSlot';
 
 // Web Speech API types (not in TS DOM lib by default).
 declare global {
@@ -46,6 +46,18 @@ interface BenefitEstimate {
   estimated: boolean;
 }
 
+interface FahrplanEntry {
+  funding_id: string;
+  funding_name: string;
+  status: string;
+  authority: string;
+  online: boolean;
+  offline: boolean;
+  links: string[];
+  documents: string[];
+  steps: { step_id?: string; title: string; when?: string; explain?: string; risk_if_missed?: string }[];
+}
+
 const STATUS_LABEL: Record<DecisionSnapshot['status'], string> = {
   eligible: 'grundsätzlich in Betracht kommend',
   not_eligible: 'nicht in Betracht kommend',
@@ -61,6 +73,7 @@ function AssistInner() {
   const [pendingQuestions, setPendingQuestions] = useState<string[]>([]);
   const [related, setRelated] = useState<RelatedItem[]>([]);
   const [benefit, setBenefit] = useState<BenefitEstimate | null>(null);
+  const [fahrplan, setFahrplan] = useState<FahrplanEntry[]>([]);
   const [listening, setListening] = useState(false);
   const [micSupported] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
@@ -118,6 +131,7 @@ function AssistInner() {
     if (data.decisions?.length) setActiveId(data.decisions[0].decision_id);
     setRelated(data.related ?? []);
     setBenefit(data.benefitEstimate ?? null);
+    setFahrplan(data.fahrplan ?? []);
 
     const questions: string[] = data.clarificationQuestions ?? [];
     setPendingQuestions(questions);
@@ -305,6 +319,73 @@ function AssistInner() {
             ))}
           </ul>
         </div>
+      )}
+
+      {fahrplan.length > 0 && (
+        <section className="mt-4 space-y-3">
+          <h2 className="text-sm font-semibold text-slate-700">Antrags-Fahrplan</h2>
+          {fahrplan.map((fp) => (
+            <div key={fp.funding_id} className="rounded-xl border border-slate-200 bg-white p-4 text-sm shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="font-semibold text-slate-800">{fp.funding_name}</h3>
+                <span className="rounded-full border border-teal-200 bg-teal-50 px-2 py-0.5 text-xs font-medium text-teal-700">
+                  in Betracht kommend
+                </span>
+              </div>
+              <p className="mt-1.5 text-xs text-slate-500">
+                Zuständige Stelle: <strong className="text-slate-700">{fp.authority}</strong>
+                {fp.online && <span className="ml-1 rounded bg-slate-100 px-1 py-0.5 text-[10px]">Online-Antrag</span>}
+                {fp.offline && <span className="ml-1 rounded bg-slate-100 px-1 py-0.5 text-[10px]">Papierformular</span>}
+              </p>
+
+              {fp.steps.length > 0 && (
+                <ol className="mt-3 space-y-2">
+                  {fp.steps.map((s, i) => (
+                    <li key={s.step_id ?? i} className="flex gap-2.5">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-teal-700 text-[10px] font-bold text-white">
+                        {i + 1}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="font-medium text-slate-700">{s.title}</p>
+                        {s.when && <p className="text-xs text-amber-700">⏰ {s.when}</p>}
+                        {s.explain && <p className="text-xs text-slate-500">{s.explain}</p>}
+                        {s.risk_if_missed && <p className="text-xs text-red-600">⚠️ {s.risk_if_missed}</p>}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              )}
+
+              {fp.documents.length > 0 && (
+                <div className="mt-3">
+                  <p className="text-xs font-medium text-slate-500">Unterlagen:</p>
+                  <ul className="mt-0.5 list-disc pl-5 text-xs text-slate-600">
+                    {fp.documents.map((doc, i) => (
+                      <li key={i}>{doc}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {fp.links.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {fp.links.map((l, i) => (
+                    <a
+                      key={i}
+                      href={l}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => fireAdEvent('exit_intent')}
+                      className="rounded-full border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-medium text-teal-700 hover:bg-teal-100"
+                    >
+                      {l.replace(/^https?:\/\//, '')} ↗
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </section>
       )}
 
       {decisions.length > 0 && (

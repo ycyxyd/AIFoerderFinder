@@ -14,6 +14,7 @@ import { evaluateAll } from '../../../lib/engine/evaluator';
 import { extractProfile } from '../../../lib/ai/extract';
 import { composeAdvice } from '../../../lib/ai/advise';
 import { suggestRelated, estimateAnnualBenefits } from '../../../lib/engine/cross-benefits';
+import { buildFahrplan } from '../../../lib/fahrplan';
 import { getMemoryRepository, getRepository } from '../../../lib/db/repository';
 import {
   rateLimit,
@@ -80,6 +81,7 @@ export async function POST(request: Request) {
     // 5) Cross-benefits + benefit estimate (deterministic).
     const related = suggestRelated(text, p, decisions);
     const benefitEstimate = estimateAnnualBenefits(decisions, p);
+    const fahrplan = buildFahrplan(decisions, fundings);
 
     // 5) Audit log.
     try {
@@ -110,6 +112,7 @@ export async function POST(request: Request) {
       extractError: extractError ?? undefined,
       related,
       benefitEstimate,
+      fahrplan,
       persisted,
     });
   } catch (err) {
