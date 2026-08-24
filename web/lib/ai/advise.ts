@@ -11,6 +11,7 @@ import type { DecisionSnapshot, UserProfile } from '../types';
 import { SYSTEM_PROMPT } from './system-prompt';
 import { chatCompletion, hasMistralKey, MistralError } from './mistral';
 import { filterResponse } from './response-filter';
+import { retrieve, formatKnowledge } from '../rag';
 
 export interface AdviseInput {
   profile: UserProfile;
@@ -116,6 +117,9 @@ export async function composeAdvice(input: AdviseInput): Promise<AdviseOutput> {
   const context = buildAssessmentContext(input);
   const userPrompt = [
     context,
+    '',
+    'WISSENSDATENBANK (nur als ergänzende Hinweise verwenden — veraltete/unsichere Beträge als „bitte aktuell prüfen“ kennzeichnen):',
+    formatKnowledge(retrieve(`${input.text} ${Object.values(input.profile).join(' ')}`, 3)),
     '',
     'Aufgabe: Verfasse eine umfassende, verständliche Gesamteinschätzung auf Deutsch mit folgender Struktur:',
     '1) Kurzer Überblick (1-2 Sätze)',

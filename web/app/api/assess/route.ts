@@ -13,6 +13,7 @@ import { loadFundings } from '../../../lib/engine/registry';
 import { evaluateAll } from '../../../lib/engine/evaluator';
 import { extractProfile } from '../../../lib/ai/extract';
 import { composeAdvice } from '../../../lib/ai/advise';
+import { suggestRelated, estimateAnnualBenefits } from '../../../lib/engine/cross-benefits';
 import { getMemoryRepository, getRepository } from '../../../lib/db/repository';
 import {
   rateLimit,
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
     }
 
     // 1) Extract facts (LLM, whitelist-sanitized; deterministic fallback).
-    const { profile, missing, usedMock: extractMock, error: extractError } = await extractProfile(text);
+    const { profile, missing, clarificationQuestions, usedMock: extractMock, error: extractError } = await extractProfile(text);
     const p = { ...profile } as UserProfile;
     if (body.user_id) p.user_id = body.user_id;
 
@@ -76,6 +77,10 @@ export async function POST(request: Request) {
     // 4) Comprehensive advice (explain-only on the snapshots).
     const advice = await composeAdvice({ profile: p, decisions, text });
 
+    // 5) Cross-benefits + benefit estimate (deterministic).
+    const related = suggestRelated(text, p, decisions);
+    const benefitEstimate = estimateAnnualBenefits(decisions, p);
+
     // 5) Audit log.
     try {
       await getRepository().saveAudit({
@@ -96,12 +101,15 @@ export async function POST(request: Request) {
     return NextResponse.json({
       profile: p,
       missing,
+      clarificationQuestions,
       decisions,
       advice: advice.text,
       adviceUsedMock: advice.usedMock,
       adviceNeutralized: advice.neutralized,
       extractUsedMock: extractMock,
       extractError: extractError ?? undefined,
+      related,
+      benefitEstimate,
       persisted,
     });
   } catch (err) {

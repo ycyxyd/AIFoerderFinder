@@ -8,9 +8,9 @@ beforeAll(() => {
 });
 
 describe('registry (real data/foerderungen/*.json)', () => {
-  it('loads exactly 10 fundings with unique ids', () => {
+  it('loads exactly 12 fundings with unique ids', () => {
     const fundings = loadFundings();
-    expect(fundings).toHaveLength(10);
+    expect(fundings).toHaveLength(12);
     const ids = fundings.map((f) => f.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
@@ -19,7 +19,8 @@ describe('registry (real data/foerderungen/*.json)', () => {
     const ids = loadFundings().map((f) => f.id).sort();
     expect(ids).toEqual([
       'alg1', 'bafoeg', 'bildungsgutschein', 'buergergeld', 'einstiegsgeld',
-      'elterngeld', 'gruendungszuschuss', 'kfw_gruenderkredit', 'kindergeld', 'wohngeld',
+      'elterngeld', 'gruendungszuschuss', 'kfw_gruenderkredit', 'kindergeld',
+      'pv_anlage', 'waermepumpe', 'wohngeld',
     ]);
   });
 });

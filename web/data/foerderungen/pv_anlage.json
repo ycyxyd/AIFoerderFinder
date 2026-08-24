@@ -1,0 +1,78 @@
+{
+  "id": "pv_anlage",
+  "name": "Photovoltaik-Anlage (inkl. Steuervorteile)",
+  "category": "Energie & Sanierung",
+  "provider": "Marktstammdatenregister / Netzbetreiber / Finanzamt",
+  "description": "Förderung und steuerliche Vorteile für Photovoltaik auf dem eigenen Dach: 0 % Umsatzsteuer, gesetzliche Einspeisevergütung (EEG), günstige Kredite (KfW 442) und kommunale Zuschüsse.",
+  "target_group": ["Eigentümer", "Selbstnutzer", "Wohneigentümergemeinschaften"],
+  "eligibility_rules": [
+    {
+      "if": { "has_property": true },
+      "then": { "eligible": true }
+    }
+  ],
+  "exclusion_rules": [
+    {
+      "if": { "has_property": { "neq": true } },
+      "then": {
+        "eligible": false,
+        "reason": "NO_PROPERTY",
+        "alternative": []
+      }
+    }
+  ],
+  "risk_rules": [],
+  "benefits": {
+    "type": "money",
+    "description": "0 % Umsatzsteuer auf Anlage und Installation; Einspeisevergütung je nach Größe und Jahr; Eigenverbrauch spart Stromkosten."
+  },
+  "application": {
+    "authority": "Netzbetreiber + Marktstammdatenregister (MaStR)",
+    "online": true,
+    "offline": false,
+    "links": ["https://www.marktstammdatenregister.de", "https://www.kfw.de/442"]
+  },
+  "documents_required": [
+    "Angebot des Elektro-/Solarbetriebs",
+    "Anmeldung im Marktstammdatenregister (MaStR)",
+    "Einspeisevertrag mit dem Netzbetreiber",
+    "Bei KfW-Kredit: KfW-Antrag über Hausbank"
+  ],
+  "steps": [
+    {
+      "step_id": "PV_STEP_1",
+      "title": "Angebote einholen und vergleichen",
+      "when": "Vor der Bestellung",
+      "explain": "Mehrere Angebote von Solarbetrieben einholen; Größe an Stromverbrauch und Dachfläche anpassen.",
+      "risk_if_missed": "Überdimensionierte Anlage amortisiert sich langsamer"
+    },
+    {
+      "step_id": "PV_STEP_2",
+      "title": "Anlage im MaStR anmelden",
+      "when": "Vor Inbetriebnahme",
+      "explain": "Anmeldung im Marktstammdatenregister; Netzbetreiber über geplante Einspeisung informieren.",
+      "risk_if_missed": "Ordnungswidrigkeit, keine Einspeisevergütung"
+    },
+    {
+      "step_id": "PV_STEP_3",
+      "title": "Inbetriebnahme und Zählerwechsel",
+      "when": "Nach Installation",
+      "explain": "Zweirichtungszähler durch den Netzbetreiber einbauen lassen; Anlage in Betrieb nehmen.",
+      "risk_if_missed": "Einspeisevergütung greift erst nach Zählertausch"
+    }
+  ],
+  "notes": [
+    "Seit 2023: 0 % Umsatzsteuer auf Lieferung/Installation von PV-Anlagen inkl. Speicher.",
+    "Einspeisevergütung nach EEG; Höhe abhängig von Anlagengröße und Inbetriebnahmejahr.",
+    "Kombination mit Wärmepumpe erhöht den Eigenverbrauch und damit die Ersparnis.",
+    "Kommunale Zuschüsse (z. B. für Balkonkraftwerke) je Stadt prüfen.",
+    "Die Regeln sind vereinfacht; Bedingungen im Einzelfall prüfen."
+  ],
+  "valid_until": "2026-12-31",
+  "last_verified": "2026-08-24",
+  "sources": [
+    "Marktstammdatenregister (marktstammdatenregister.de)",
+    "KfW — 442 Erneuerbare Energien Standard (kfw.de)",
+    "EEG (Erneuerbare-Energien-Gesetz)"
+  ]
+}

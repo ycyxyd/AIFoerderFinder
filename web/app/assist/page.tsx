@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import Link from 'next/link';
 import type { DecisionSnapshot, UserProfile } from '../../lib/types';
+import AdSlot, { bumpAdInteractions } from '../../components/AdSlot';
 
 // Web Speech API types (not in TS DOM lib by default).
 declare global {
@@ -27,6 +28,22 @@ interface UiMessage {
   text: string;
   blocked?: boolean;
   mock?: boolean;
+  /** Rendert einen AdSlot VOR dieser Nachricht (Event before_assessment). */
+  adBefore?: boolean;
+}
+
+interface RelatedItem {
+  id?: string;
+  name: string;
+  reason: string;
+  knowledgeDoc?: string;
+}
+
+interface BenefitEstimate {
+  lines: { funding_id: string; name: string; amount: number; unit: string }[];
+  totalAnnual: number;
+  totalMonthly: number;
+  estimated: boolean;
 }
 
 const STATUS_LABEL: Record<DecisionSnapshot['status'], string> = {
@@ -41,11 +58,16 @@ function AssistInner() {
   const [loading, setLoading] = useState(false);
   const [decisions, setDecisions] = useState<DecisionSnapshot[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [pendingQuestions, setPendingQuestions] = useState<string[]>([]);
+  const [related, setRelated] = useState<RelatedItem[]>([]);
+  const [benefit, setBenefit] = useState<BenefitEstimate | null>(null);
   const [listening, setListening] = useState(false);
   const [micSupported] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     return Boolean(window.SpeechRecognition || window.webkitSpeechRecognition);
   });
+  const baseTextRef = useRef('');
+  const answersRef = useRef('');
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
   function startVoice() {
@@ -84,48 +106,72 @@ function AssistInner() {
     setListening(false);
   }
 
+  async function runAssess(text: string) {
+    const res = await fetch('/api/assess', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error ?? 'Fehler');
+    setDecisions(data.decisions);
+    if (data.decisions?.length) setActiveId(data.decisions[0].decision_id);
+    setRelated(data.related ?? []);
+    setBenefit(data.benefitEstimate ?? null);
+
+    const questions: string[] = data.clarificationQuestions ?? [];
+    setPendingQuestions(questions);
+
+    setMessages((m) => [
+      ...m,
+      {
+        role: 'assistant',
+        text: data.advice,
+        mock: Boolean(data.adviceUsedMock || data.extractUsedMock),
+        adBefore: true,
+      },
+      ...(questions.length
+        ? [
+            {
+              role: 'assistant' as const,
+              text: `Um die Einschätzung zu verbessern, beantworten Sie bitte:\n${questions
+                .map((q, i) => `${i + 1}) ${q}`)
+                .join('\n')}`,
+            },
+          ]
+        : []),
+    ]);
+
+    try {
+      localStorage.setItem(
+        'foerderfinder.check',
+        JSON.stringify({ profile: data.profile, decisions: data.decisions, created_at: new Date().toISOString() })
+      );
+    } catch {
+      /* localStorage unavailable — non-fatal */
+    }
+  }
+
   async function send(e: React.FormEvent) {
     e.preventDefault();
     const text = input.trim();
     if (!text || loading) return;
     setMessages((m) => [...m, { role: 'user', text }]);
+    bumpAdInteractions(1);
     setInput('');
     setLoading(true);
     try {
-      if (decisions.length === 0) {
-        // First message: full assessment.
-        const res = await fetch('/api/assess', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error ?? 'Fehler');
-        setDecisions(data.decisions);
-        if (data.decisions?.length) setActiveId(data.decisions[0].decision_id);
-        setMessages((m) => [
-          ...m,
-          {
-            role: 'assistant',
-            text: data.advice,
-            mock: Boolean(data.adviceUsedMock || data.extractUsedMock),
-          },
-        ]);
-        // Mirror the assessment into localStorage so /results can show it too.
-        try {
-          localStorage.setItem(
-            'foerderfinder.check',
-            JSON.stringify({ profile: data.profile, decisions: data.decisions, created_at: new Date().toISOString() })
-          );
-          const uid = localStorage.getItem('foerderfinder.user_id');
-          if (uid && !data.profile?.user_id) {
-            // store association for future requests
-          }
-        } catch {
-          /* localStorage unavailable — non-fatal */
-        }
+      const isClarify = pendingQuestions.length > 0;
+      if (decisions.length === 0 || isClarify) {
+        // Vollständige Einschätzung (erste Nachricht oder Antwort auf Rückfragen).
+        const combined = isClarify
+          ? `${baseTextRef.current} ${answersRef.current} ${text}`.trim()
+          : text;
+        if (!baseTextRef.current) baseTextRef.current = text;
+        answersRef.current = combined;
+        await runAssess(combined);
       } else {
-        // Follow-up question on the active decision (explain-only).
+        // Rückfrage zur ausgewählten Förderung (explain-only).
         const decisionId = activeId ?? decisions[0]?.decision_id;
         if (!decisionId) throw new Error('Keine Entscheidung vorhanden');
         const res = await fetch('/api/explain', {
@@ -182,13 +228,18 @@ function AssistInner() {
               Arbeitslosenversicherung eingezahlt, 6.000 Euro Vermögen und ein Kind.“</em>
             </p>
             <p>
-              Die App erkennt die wichtigsten Angaben, prüft automatisch alle
-              Förderprogramme und gibt Ihnen eine verständliche Gesamteinschätzung.
+              Oder: <em>„Ich möchte in Köln eine Wärmepumpe einbauen, mein Haus gehört
+              mir, Einkommen 45.000 €.“</em>
+            </p>
+            <p>
+              Die App erkennt Angaben, fragt bei Bedarf nach, prüft alle Förderprogramme
+              und gibt eine verständliche Gesamteinschätzung.
             </p>
           </div>
         )}
         {messages.map((m, i) => (
           <div key={i} className={m.role === 'user' ? 'text-right' : 'text-left'}>
+            {m.adBefore && <AdSlot event="before_assessment" />}
             <div
               className={`inline-block max-w-[88%] whitespace-pre-wrap rounded-xl px-4 py-3 text-sm ${
                 m.role === 'user'
@@ -208,8 +259,53 @@ function AssistInner() {
             </div>
           </div>
         ))}
+        <AdSlot event="after_assessment" />
         {loading && <p className="text-sm text-slate-400">Wird analysiert…</p>}
       </div>
+
+      {benefit && benefit.lines.length > 0 && (
+        <div className="mt-3 rounded-xl border border-teal-200 bg-teal-50 p-4 text-sm">
+          <p className="font-semibold text-teal-900">
+            Max. Förderungen (Schätzung): bis zu{' '}
+            {benefit.totalAnnual.toLocaleString('de-DE')} € pro Jahr
+            <span className="font-normal text-teal-700">
+              {' '}
+              (≈ {benefit.totalMonthly.toLocaleString('de-DE')} €/Monat)
+            </span>
+          </p>
+          <table className="mt-2 w-full text-left text-xs text-teal-900">
+            <tbody>
+              {benefit.lines.map((l) => (
+                <tr key={l.funding_id}>
+                  <td className="py-0.5 pr-2">{l.name}</td>
+                  <td className="py-0.5 text-right font-medium">
+                    {l.amount.toLocaleString('de-DE')} € {l.unit}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="mt-1 text-[11px] text-teal-600">
+            Unverbindliche Schätzung, keine Zusage. Maßgeblich ist die zuständige Stelle.
+          </p>
+        </div>
+      )}
+
+      {related.length > 0 && (
+        <div className="mt-3 rounded-xl border border-slate-200 bg-white p-4 text-sm">
+          <p className="font-semibold text-slate-700">Außerdem prüfen:</p>
+          <ul className="mt-1 space-y-1 text-xs text-slate-600">
+            {related.map((r) => (
+              <li key={r.id ?? r.name}>
+                <strong>{r.name}</strong> — {r.reason}
+                {r.knowledgeDoc && (
+                  <span className="text-slate-400"> (Details in der Wissensdatenbank)</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {decisions.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-2">
@@ -243,6 +339,13 @@ function AssistInner() {
         </p>
       )}
 
+      {(() => {
+        const userCount = messages.filter((m) => m.role === 'user').length;
+        if (userCount >= 6) return <AdSlot key="f6" event="chat_followup_6" />;
+        if (userCount >= 3) return <AdSlot key="f3" event="chat_followup_3" />;
+        return null;
+      })()}
+
       <form onSubmit={send} className="mt-4 flex gap-2">
         {micSupported && (
           <button
@@ -263,9 +366,11 @@ function AssistInner() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={
-            decisions.length === 0
-              ? 'Beschreiben Sie Ihre Situation…'
-              : 'Ihre Frage zur ausgewählten Förderung…'
+            pendingQuestions.length > 0
+              ? 'Beantworten Sie die Rückfragen…'
+              : decisions.length === 0
+                ? 'Beschreiben Sie Ihre Situation…'
+                : 'Ihre Frage zur ausgewählten Förderung…'
           }
           className="flex-1 rounded-lg border border-slate-300 px-3 py-2"
         />

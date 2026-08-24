@@ -51,8 +51,32 @@ const EMPLOYMENT_STATUSES = [
 export interface ExtractResult {
   profile: UserProfile;
   missing: string[];
+  /** Gezielte Rückfragen, falls wichtige Felder fehlen (max. 3). */
+  clarificationQuestions: string[];
   usedMock: boolean;
   error?: string;
+}
+
+/** Deterministische Rückfragen aus fehlenden Kernfeldern (de-DE). */
+export function buildClarificationQuestions(missing: string[], profile: UserProfile): string[] {
+  const order: [keyof UserProfile, string][] = [
+    ['employment_status', 'Wie ist Ihr Beschäftigungsstatus (angestellt, selbstständig, arbeitslos, Student/in, Rentner/in)?'],
+    ['monthly_income', 'Wie hoch ist Ihr monatliches Nettoeinkommen?'],
+    ['children', 'Haben Sie Kinder? Wenn ja, wie viele?'],
+    ['assets_total', 'Wie hoch ist Ihr Vermögen (Ersparnisse, Wertpapiere, Grundstücke)?'],
+    ['insurance_months', 'Wie viele Monate waren Sie in den letzten 30 Monaten versicherungspflichtig beschäftigt?'],
+    ['residence_plz', 'In welcher PLZ bzw. Stadt wohnen Sie?'],
+    ['single_parent', 'Sind Sie alleinerziehend?'],
+    ['has_car', 'Besitzen Sie ein Auto?'],
+  ];
+  const out: string[] = [];
+  for (const [field, q] of order) {
+    if (missing.includes(field as string) && profile[field] === undefined) {
+      out.push(q);
+      if (out.length >= 3) break;
+    }
+  }
+  return out;
 }
 
 const EXTRACT_SYSTEM_PROMPT = `Du bist ein datenschutzfreundlicher Sachbearbeiter für eine deutsche Förderberatung.
@@ -73,6 +97,9 @@ Regeln:
 - Fehlt eine Angabe, nimm sie NICHT an und lasse das Feld weg. "missing" enthält Felder,
   die für eine Beurteilung wichtig wären, aber nicht erwähnt wurden (maximal 5).
 - Wenn der Nutzer z.B. "arbeitslos" sagt → employment_status: "unemployed".
+- "eigenes Haus/Eigentumswohnung/Eigentum" → has_property: true; "zur Miete/Mieter" → has_property: false.
+- Auch Umschreibungen wie "mein Haus gehört mir", "unser Haus", "Hausbesitzer", "Eigenheim" → has_property: true.
+- monthly_income ist das MONATLICHE NETTO-Einkommen. Nennt der Nutzer ein Jahreseinkommen ohne "monatlich" (z.B. "Einkommen 45000 Euro"), teile durch 12 und runde auf ganze Euro.
 - Wandle deutsche Zahlwörter um (z.B. "sechshundert" → 600).`;
 
 /**
@@ -190,6 +217,9 @@ export function fallbackExtract(text: string): { profile: UserProfile; missing: 
   if (/Student|Studentin|studier/i.test(text)) profile.student = true;
   if (/Rentner|im Ruhestand/i.test(text)) profile.employment_status = 'retired';
   if (/verheiratet|Partner|Ehefrau|Ehemann|Lebenspartner/i.test(text)) profile.single_parent = false;
+  if (/eigenes Haus|Eigentumswohnung|Eigentum|Hauseigentümer|Wohnungseigentümer|mein Haus|unser Haus|gehört mir|gehört uns|Hausbesitzer|Eigenheim/i.test(text)) profile.has_property = true;
+  if (/zur Miete|Mieter|Mietwohnung/i.test(text)) profile.has_property = false;
+  if (/Wärmepumpe|Wärmepumpen|Heizung/i.test(text)) profile.heating_renovation_planned = true;
 
   return { profile, missing };
 }
@@ -217,7 +247,7 @@ function parseLlmJson(raw: string): unknown {
 export async function extractProfile(text: string): Promise<ExtractResult> {
   if (!hasMistralKey()) {
     const { profile, missing } = fallbackExtract(text);
-    return { profile, missing, usedMock: true };
+    return { profile, missing, clarificationQuestions: buildClarificationQuestions(missing, profile), usedMock: true };
   }
 
   const userPrompt = [
@@ -237,10 +267,21 @@ export async function extractProfile(text: string): Promise<ExtractResult> {
     const missing = Array.isArray(parsed?.missing)
       ? (parsed.missing as unknown[]).filter((m): m is string => typeof m === 'string').slice(0, 5)
       : [];
-    return { profile, missing, usedMock: false };
+    return {
+      profile,
+      missing,
+      clarificationQuestions: buildClarificationQuestions(missing, profile),
+      usedMock: false,
+    };
   } catch (err) {
     const message = err instanceof MistralError ? err.message : 'Unbekannter Fehler bei der Extraktion.';
     const { profile, missing } = fallbackExtract(text);
-    return { profile, missing, usedMock: true, error: message };
+    return {
+      profile,
+      missing,
+      clarificationQuestions: buildClarificationQuestions(missing, profile),
+      usedMock: true,
+      error: message,
+    };
   }
 }

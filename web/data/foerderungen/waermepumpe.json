@@ -1,0 +1,81 @@
+{
+  "id": "waermepumpe",
+  "name": "Wärmepumpen-Förderung (BEG / KfW)",
+  "category": "Energie & Sanierung",
+  "provider": "BAFA (Bundesamt für Wirtschaft und Ausfuhrkontrolle) / KfW",
+  "description": "Zuschuss für den Einbau einer effizienten Wärmepumpe im Bestand (Heizungstausch). Grundförderung 30 %, plus Einkommens- und Klimageschwindigkeitsbonus, maximal 70 % der förderfähigen Kosten.",
+  "target_group": ["Eigentümer", "Selbstnutzer", "Vermieter"],
+  "eligibility_rules": [
+    {
+      "if": { "has_property": true },
+      "then": { "eligible": true }
+    }
+  ],
+  "exclusion_rules": [
+    {
+      "if": { "has_property": { "neq": true } },
+      "then": {
+        "eligible": false,
+        "reason": "NO_PROPERTY",
+        "alternative": []
+      }
+    }
+  ],
+  "risk_rules": [
+    {
+      "if": { "has_property": true },
+      "then": { "risk": "ANTrag_VOR_BEGINN_STELLEN", "message_key": "APPLY_BEFORE_WORK_STARTS" }
+    }
+  ],
+  "benefits": {
+    "type": "money",
+    "description": "30–70 % Zuschuss auf förderfähige Kosten (max. 30.000 € erste Wohneinheit); kombinierbar mit PV-Anlage."
+  },
+  "application": {
+    "authority": "BAFA (Online-Portal)",
+    "online": true,
+    "offline": false,
+    "links": ["https://www.bafa.de/energie/heizungsfoerderung"]
+  },
+  "documents_required": [
+    "Angebot des Installateurs",
+    "Vorhabenbeschreibung (Bestandsgebäude, geplante Maßnahme)",
+    "Nachweis Eigentum (z. B. Grundbuchauszug oder Kaufvertrag)",
+    "Nach Abschluss: Rechnungen und Bestätigung des Fachunternehmens"
+  ],
+  "steps": [
+    {
+      "step_id": "WP_STEP_1",
+      "title": "Angebot einholen und Antrag stellen",
+      "when": "VOR Beginn der Maßnahme — sonst droht Förderungsausschluss",
+      "explain": "Beim BAFA Online-Portal einen Antrag mit Angebot des Fachbetriebs einreichen und Bewilligung abwarten.",
+      "risk_if_missed": "Rückwirkende Förderung ist ausgeschlossen"
+    },
+    {
+      "step_id": "WP_STEP_2",
+      "title": "Maßnahme umsetzen lassen",
+      "when": "Nach Bewilligung",
+      "explain": "Einbau durch zugelassenes Fachunternehmen; Bestätigung nach Auftragserteilung (BAFA) einholen.",
+      "risk_if_missed": "Formale Nachweise fehlen später"
+    },
+    {
+      "step_id": "WP_STEP_3",
+      "title": "Nachweise einreichen",
+      "when": "Nach Abschluss der Arbeiten",
+      "explain": "Rechnungen und Fachunternehmererklärung im BAFA-Portal hochladen; Auszahlung erfolgt danach.",
+      "risk_if_missed": "Auszahlung verzögert sich"
+    }
+  ],
+  "notes": [
+    "Einkommensbonus (+30 %) gilt bei zu versteuerndem Haushaltseinkommen bis 40.000 €/Jahr.",
+    "Klimageschwindigkeitsbonus (+20 %) für besonders effiziente Wärmepumpen, degressiv bis 2028.",
+    "Kombination mit Photovoltaik wird begünstigt — prüfen Sie auch die PV-Förderung.",
+    "Die Regeln sind vereinfacht; Bedingungen im Einzelfall beim BAFA prüfen."
+  ],
+  "valid_until": "2026-12-31",
+  "last_verified": "2026-08-24",
+  "sources": [
+    "BAFA — Heizungsförderung (bafa.de)",
+    "KfW — 458 Heizungsförderung für Selbstnutzer (kfw.de)"
+  ]
+}
