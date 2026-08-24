@@ -21,12 +21,20 @@ export default function HomePage() {
         endgültige Entscheidung trifft ausschließlich die zuständige Stelle.
       </div>
 
-      <Link
-        href="/onboarding"
-        className="rounded-lg bg-teal-700 px-8 py-3 text-lg font-semibold text-white shadow transition hover:bg-teal-800"
-      >
-        Jetzt prüfen
-      </Link>
+      <div className="flex w-full max-w-sm flex-col gap-3 sm:flex-row sm:justify-center">
+        <Link
+          href="/assist"
+          className="rounded-lg bg-teal-700 px-8 py-3 text-center text-lg font-semibold text-white shadow transition hover:bg-teal-800"
+        >
+          Im Chat beschreiben
+        </Link>
+        <Link
+          href="/onboarding"
+          className="rounded-lg border border-teal-700 px-8 py-3 text-center text-lg font-semibold text-teal-700 transition hover:bg-teal-50"
+        >
+          Formular ausfüllen
+        </Link>
+      </div>
 
       <p className="max-w-xl text-center text-xs text-slate-400">
         Hinweis: Diese Einschätzung ersetzt keine Entscheidung der zuständigen

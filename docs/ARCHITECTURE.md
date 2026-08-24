@@ -28,7 +28,7 @@ User Input → Intent Detection → Policy Gate → Decision Store (read-only)
 | Rate Limiting | `lib/ratelimit.ts` | Sliding-Window pro Client-IP (In-Memory); /api/explain, /api/decisions, /api/auth/* |
 | AI Explain | `lib/ai/explain.ts` | Einziger LLM-Aufruf; bekommt nur Decision-Snapshot |
 | Response Filter | `lib/ai/response-filter.ts` | Neutralisiert verbotene Formulierungen |
-| API | `app/api/` | decisions (erzeugen), explain (Chat), fundings (Meta) |
+| API | `app/api/` | decisions (erzeugen), explain (Chat), assess (Gesprächs-Intake: LLM-Extraktion → Regel-Engine → Gesamtberatung), fundings (Meta) |
 | UI | `app/` | Landing, Onboarding, Results, Chat |
 
 ## Entscheidungen (bewusst getroffen)
